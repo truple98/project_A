@@ -1,0 +1,38 @@
+📁 frontend/ 디렉토리 구조 (React Native 기반 TRPG 게임 앱)
+
+📦 루트 구조
+frontend/
+├── assets/             # 이미지, 폰트 등 정적 자원
+├── components/         # 재사용 가능한 UI 컴포넌트
+├── features/           # 기능 단위 상태 및 UI (RTK + React Query 단위 구성)
+├── navigation/         # 화면 이동 구조 정의 (React Navigation)
+├── screens/            # 페이지별 UI 화면 컴포넌트
+├── store/              # Redux store, slice 통합
+├── hooks/              # 커스텀 훅 (React Query 등)
+├── constants/          # 상수값, config
+├── services/           # API 호출 로직 (Axios 기반)
+├── utils/              # 유틸리티 함수 모음
+├── types/              # 공통 타입 정의 (TypeScript 인터페이스)
+├── App.tsx             # 앱 진입점
+└── index.ts            # 루트 등록 (Expo 기준)
+
+📌 디렉토리별 역할 및 파일 네이밍 규칙
+
+- assets/: logo.png, theme-font.ttf 등
+- components/: MyButton.tsx, StoryCard.tsx 등
+- features/: 기능 단위 구성 (예: features/story/storySlice.ts)
+- navigation/: AppNavigator.tsx, StackRoutes.tsx
+- screens/: HomeScreen.tsx, EncounterScreen.tsx
+- store/: store.ts, rootReducer.ts
+- hooks/: useAuth.ts, useStoryQuery.ts
+- constants/: routes.ts, gameConfig.ts
+- services/: storyAPI.ts, userAPI.ts
+- utils/: formatDate.ts, getNodeTitle.ts
+- types/: story.ts, user.ts
+
+📌 파일명 네이밍 규칙
+- 컴포넌트: PascalCase.tsx
+- 훅/유틸/서비스: camelCase.ts
+- 타입 정의: snake_case.ts 또는 모듈명 기반
+
+✅ 현재는 2단계 구조 유지가 적절하며, 기능 확장 시 폴더 분할 예정

@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  gameSessions GameSession[]
+  characters   Character[]
+
+  @@map("users")
+}
+
+model Character {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameSessions GameSession[]
+  traits       CharacterTrait[]
+  inventory    InventoryItem[]
+
+  @@map("characters")
+}
+
+model GameSession {
+  id            String   @id @default(cuid())
+  userId        String
+  characterId   String
+  currentNodeId String
+  gameState     Json     // Store game state as JSON
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@map("game_sessions")
+}
+
+model CharacterTrait {
+  id          String @id @default(cuid())
+  characterId String
+  name        String
+  value       Int
+  description String
+
+  // Relations
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@map("character_traits")
+}
+
+model InventoryItem {
+  id          String @id @default(cuid())
+  characterId String
+  name        String
+  type        String // WEAPON, ARMOR, CONSUMABLE, QUEST, MISC
+  quantity    Int    @default(1)
+  description String
+
+  // Relations
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_items")
+}
+
+model StoryNode {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  requirements Json?   // Store requirements as JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  choices StoryChoice[]
+
+  @@map("story_nodes")
+}
+
+model StoryChoice {
+  id          String @id @default(cuid())
+  storyNodeId String
+  text        String
+  nextNodeId  String
+  consequences Json?  // Store consequences as JSON
+
+  // Relations
+  storyNode StoryNode @relation(fields: [storyNodeId], references: [id], onDelete: Cascade)
+
+  @@map("story_choices")
+} 

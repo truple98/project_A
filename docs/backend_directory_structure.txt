@@ -1,0 +1,20 @@
+✅ 백엔드 디렉토리 구조 설계 (Node.js + Express + TypeScript + PostgreSQL 기반)
+
+backend/
+├── src/
+│   ├── config/              # 데이터베이스, CORS, 서버 설정 관련 파일 작성
+│   ├── constants/           # 게임 내 상수값, 선택지, enum 등의 값 정의
+│   ├── controllers/         # API 요청을 처리하는 핸들러 함수 정의
+│   ├── routes/              # 각 API 엔드포인트를 정의하고 컨트롤러와 연결
+│   ├── middlewares/         # 인증, 에러 핸들링, 요청 검증 등의 미들웨어 구현
+│   ├── services/            # 핵심 비즈니스 로직, DB 접근 처리
+│   ├── prisma/              # Prisma 스키마 파일과 클라이언트 초기화 파일 작성
+│   ├── utils/               # 공통적으로 사용하는 유틸 함수 구현 (예: 로깅, 난수 생성 등)
+│   ├── types/               # TypeScript 타입 및 인터페이스 정의
+│   ├── validations/         # zod를 활용한 요청 데이터 검증 스키마 정의
+│   ├── app.ts               # Express 인스턴스 설정 및 라우터 연결
+│   └── server.ts            # 서버 실행 진입점 (포트 리스닝 등)
+├── .env                     # 환경 변수 파일
+├── package.json             # 의존성 및 스크립트 정의
+├── tsconfig.json            # TypeScript 설정
+└── README.md                # 프로젝트 개요 및 실행 방법 문서
