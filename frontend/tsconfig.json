@@ -4,27 +4,49 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@/components/*": ["components/*"],
-      "@/features/*": ["features/*"],
-      "@/navigation/*": ["navigation/*"],
-      "@/screens/*": ["screens/*"],
-      "@/store/*": ["store/*"],
-      "@/hooks/*": ["hooks/*"],
-      "@/constants/*": ["constants/*"],
-      "@/services/*": ["services/*"],
-      "@/utils/*": ["utils/*"],
-      "@/types/*": ["types/*"],
-      "@/assets/*": ["assets/*"]
+      "@/*": [
+        "*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/features/*": [
+        "features/*"
+      ],
+      "@/navigation/*": [
+        "navigation/*"
+      ],
+      "@/screens/*": [
+        "screens/*"
+      ],
+      "@/store/*": [
+        "store/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@/constants/*": [
+        "constants/*"
+      ],
+      "@/services/*": [
+        "services/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/assets/*": [
+        "assets/*"
+      ]
     }
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"
   ]
-} 
+}

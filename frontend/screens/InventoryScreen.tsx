@@ -12,9 +12,9 @@ const InventoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Inventory Screen</Text>
+      <Text style={styles.title}>인벤토리</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

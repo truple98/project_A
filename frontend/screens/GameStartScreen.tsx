@@ -54,18 +54,16 @@ const GameStartScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* 헤더 */}
         <View style={styles.header}>
-          <Title style={styles.title}>Start New Adventure</Title>
-          <Paragraph style={styles.subtitle}>
-            Create your character and begin your journey
-          </Paragraph>
+          <Title style={styles.title}>새로운 모험 시작</Title>
+          <Paragraph style={styles.subtitle}>캐릭터를 생성하고 여정을 시작하세요</Paragraph>
         </View>
 
         {/* 캐릭터 이름 입력 */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.cardTitle}>Character Name</Title>
+            <Title style={styles.cardTitle}>캐릭터 이름</Title>
             <TextInput
-              label="Enter your character's name"
+              label="캐릭터 이름을 입력하세요"
               value={characterName}
               onChangeText={setCharacterName}
               mode="outlined"
@@ -78,7 +76,7 @@ const GameStartScreen = () => {
         {/* 캐릭터 클래스 선택 */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.cardTitle}>Choose Your Class</Title>
+            <Title style={styles.cardTitle}>직업 선택</Title>
             <RadioButton.Group onValueChange={setSelectedClass} value={selectedClass}>
               {characterClasses.map((charClass) => (
                 <View key={charClass.id} style={styles.radioItem}>
@@ -104,7 +102,7 @@ const GameStartScreen = () => {
         {/* 난이도 선택 */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title style={styles.cardTitle}>Difficulty</Title>
+            <Title style={styles.cardTitle}>난이도</Title>
             <RadioButton.Group onValueChange={setSelectedDifficulty} value={selectedDifficulty}>
               {difficulties.map((difficulty) => (
                 <View key={difficulty.id} style={styles.radioItem}>
@@ -129,16 +127,16 @@ const GameStartScreen = () => {
         {/* 선택된 옵션 요약 */}
         <Card style={styles.summaryCard}>
           <Card.Content>
-            <Title style={styles.cardTitle}>Character Summary</Title>
+            <Title style={styles.cardTitle}>캐릭터 요약</Title>
             <View style={styles.summaryContent}>
               <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Name:</Text>
+                <Text style={styles.summaryLabel}>이름:</Text>
                 <Text style={styles.summaryValue}>
                   {characterName || 'Not set'}
                 </Text>
               </View>
               <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Class:</Text>
+                <Text style={styles.summaryLabel}>직업:</Text>
                 <View style={styles.summaryValueContainer}>
                   <Text style={styles.summaryEmoji}>
                     {getSelectedClass()?.emoji}
@@ -149,7 +147,7 @@ const GameStartScreen = () => {
                 </View>
               </View>
               <View style={styles.summaryItem}>
-                <Text style={styles.summaryLabel}>Difficulty:</Text>
+                <Text style={styles.summaryLabel}>난이도:</Text>
                 <Chip 
                   mode="outlined" 
                   style={styles.difficultyChip}
@@ -170,7 +168,7 @@ const GameStartScreen = () => {
             style={styles.backButton}
             contentStyle={styles.buttonContent}
           >
-            Back
+            뒤로가기
           </Button>
           <Button
             mode="contained"
@@ -180,7 +178,7 @@ const GameStartScreen = () => {
             style={styles.startButton}
             contentStyle={styles.buttonContent}
           >
-            {isLoading ? 'Starting...' : 'Start Adventure'}
+            {isLoading ? '시작 중...' : '모험 시작'}
           </Button>
         </View>
       </ScrollView>

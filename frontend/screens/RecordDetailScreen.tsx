@@ -12,9 +12,9 @@ const RecordDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Record Detail Screen</Text>
+      <Text style={styles.title}>기록 상세</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

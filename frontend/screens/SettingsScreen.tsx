@@ -12,9 +12,9 @@ const SettingsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Settings Screen</Text>
+      <Text style={styles.title}>설정</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

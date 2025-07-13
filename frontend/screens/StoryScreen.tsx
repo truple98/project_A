@@ -77,7 +77,7 @@ const StoryScreen = () => {
           
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>HP</Text>
+              <Text style={styles.statLabel}>체력</Text>
               <ProgressBar 
                 progress={getHealthPercentage()} 
                 color="#ff4444" 
@@ -89,7 +89,7 @@ const StoryScreen = () => {
             </View>
             
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>MP</Text>
+              <Text style={styles.statLabel}>마나</Text>
               <ProgressBar 
                 progress={getManaPercentage()} 
                 color="#4444ff" 
@@ -116,7 +116,7 @@ const StoryScreen = () => {
 
         {/* 선택지 */}
         <View style={styles.choicesContainer}>
-          <Title style={styles.choicesTitle}>What will you do?</Title>
+          <Title style={styles.choicesTitle}>어떻게 하시겠습니까?</Title>
           
           {currentStory.choices.map((choice) => (
             <Card 
@@ -137,7 +137,7 @@ const StoryScreen = () => {
         {/* 로딩 상태 */}
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Processing your choice...</Text>
+            <Text style={styles.loadingText}>선택을 처리하는 중...</Text>
           </View>
         )}
 
@@ -149,7 +149,7 @@ const StoryScreen = () => {
             style={styles.backButton}
             disabled={isLoading}
           >
-            Back to Menu
+            메뉴로 돌아가기
           </Button>
         </View>
       </ScrollView>

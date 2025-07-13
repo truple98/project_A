@@ -4,6 +4,8 @@ import { Text, TextInput, Button, Card, Title, Paragraph } from 'react-native-pa
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
+import { useDispatch } from 'react-redux';
+import { setToken, setUser } from '../store/slices/authSlice';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -13,6 +15,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -33,6 +36,22 @@ const LoginScreen = () => {
     navigation.navigate('Register');
   };
 
+  const handleDemoMode = () => {
+    // 임시 유저/토큰 정보
+    const now = new Date().toISOString();
+    const demoUser = {
+      id: 'demo',
+      email: 'demo@demo.com',
+      username: 'DemoUser',
+      createdAt: now,
+      updatedAt: now,
+    };
+    const demoToken = 'demo-token';
+
+    dispatch(setUser(demoUser));
+    dispatch(setToken(demoToken));
+  };
+
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
@@ -42,9 +61,9 @@ const LoginScreen = () => {
         <View style={styles.content}>
           {/* 헤더 */}
           <View style={styles.header}>
-            <Title style={styles.title}>Welcome Back</Title>
+            <Title style={styles.title}>다시 오신 것을 환영합니다</Title>
             <Paragraph style={styles.subtitle}>
-              Sign in to continue your adventure
+              모험을 계속하려면 로그인하세요
             </Paragraph>
           </View>
 
@@ -52,7 +71,7 @@ const LoginScreen = () => {
           <Card style={styles.card}>
             <Card.Content>
               <TextInput
-                label="Email"
+                label="이메일"
                 value={email}
                 onChangeText={setEmail}
                 mode="outlined"
@@ -64,7 +83,7 @@ const LoginScreen = () => {
               />
 
               <TextInput
-                label="Password"
+                label="비밀번호"
                 value={password}
                 onChangeText={setPassword}
                 mode="outlined"
@@ -87,20 +106,20 @@ const LoginScreen = () => {
                 style={styles.loginButton}
                 contentStyle={styles.loginButtonContent}
               >
-                {isLoading ? 'Signing In...' : 'Sign In'}
+                {isLoading ? '로그인 중...' : '로그인'}
               </Button>
             </Card.Content>
           </Card>
 
           {/* 회원가입 링크 */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account? </Text>
+            <Text style={styles.registerText}>계정이 없으신가요? </Text>
             <Button
               mode="text"
               onPress={handleRegister}
               style={styles.registerButton}
             >
-              Sign Up
+              회원가입
             </Button>
           </View>
 
@@ -108,10 +127,10 @@ const LoginScreen = () => {
           <View style={styles.demoContainer}>
             <Button
               mode="outlined"
-              onPress={() => navigation.replace('Home')}
+              onPress={handleDemoMode}
               style={styles.demoButton}
             >
-              Demo Mode (Skip Login)
+              데모 모드 (로그인 건너뛰기)
             </Button>
           </View>
         </View>

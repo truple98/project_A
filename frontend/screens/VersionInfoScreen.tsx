@@ -12,9 +12,9 @@ const VersionInfoScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Version Info Screen</Text>
+      <Text style={styles.title}>버전 정보</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

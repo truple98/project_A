@@ -12,9 +12,9 @@ const StatusScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Status Screen</Text>
+      <Text style={styles.title}>상태 정보</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TRPG Game",
-    "slug": "trpg-game",
+    "name": "project_A",
+    "slug": "project_A",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,9 +29,6 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router"
-    ],
     "scheme": "trpg-game"
   }
 } 

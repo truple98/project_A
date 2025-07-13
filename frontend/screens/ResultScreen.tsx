@@ -12,9 +12,9 @@ const ResultScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Result Screen</Text>
+      <Text style={styles.title}>결과 화면</Text>
       <Button onPress={() => navigation.navigate('Story', { nodeId: 'next' })}>
-        Continue Story
+        다음 스토리 진행
       </Button>
     </View>
   );

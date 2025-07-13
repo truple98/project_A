@@ -12,9 +12,9 @@ const EndingScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ending Screen</Text>
+      <Text style={styles.title}>엔딩 화면</Text>
       <Button onPress={() => navigation.navigate('Home')}>
-        Back to Home
+        홈으로 돌아가기
       </Button>
     </View>
   );

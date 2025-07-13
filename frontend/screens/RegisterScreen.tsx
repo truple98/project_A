@@ -12,9 +12,9 @@ const RegisterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register Screen</Text>
+      <Text style={styles.title}>회원가입</Text>
       <Button onPress={() => navigation.navigate('Login')}>
-        Back to Login
+        로그인 화면으로 돌아가기
       </Button>
     </View>
   );

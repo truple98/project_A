@@ -12,9 +12,9 @@ const HistoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>History Screen</Text>
+      <Text style={styles.title}>히스토리</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

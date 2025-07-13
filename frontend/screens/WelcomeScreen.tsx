@@ -12,9 +12,9 @@ const WelcomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Screen</Text>
+      <Text style={styles.title}>환영합니다</Text>
       <Button onPress={() => navigation.navigate('Login')}>
-        Go to Login
+        로그인 화면으로 이동
       </Button>
     </View>
   );

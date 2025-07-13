@@ -12,9 +12,9 @@ const HelpScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Help Screen</Text>
+      <Text style={styles.title}>도움말</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

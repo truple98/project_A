@@ -12,9 +12,9 @@ const CharacterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Character Screen</Text>
+      <Text style={styles.title}>캐릭터 정보</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );

@@ -39,8 +39,8 @@ const HomeScreen = () => {
           <View style={styles.userInfo}>
             <Avatar.Text size={50} label="AD" style={styles.avatar} />
             <View style={styles.userText}>
-              <Title style={styles.welcomeText}>Welcome back,</Title>
-              <Text style={styles.username}>Adventurer</Text>
+              <Title style={styles.welcomeText}>다시 오신 것을 환영합니다,</Title>
+              <Text style={styles.username}>모험가님</Text>
             </View>
           </View>
         </View>
@@ -48,22 +48,22 @@ const HomeScreen = () => {
         {/* 게임 상태 카드 */}
         <Card style={styles.statusCard}>
           <Card.Content>
-            <Title style={styles.statusTitle}>Current Status</Title>
+            <Title style={styles.statusTitle}>현재 상태</Title>
             <View style={styles.statusGrid}>
               <View style={styles.statusItem}>
-                <Text style={styles.statusLabel}>Level</Text>
+                <Text style={styles.statusLabel}>레벨</Text>
                 <Text style={styles.statusValue}>5</Text>
               </View>
               <View style={styles.statusItem}>
-                <Text style={styles.statusLabel}>Health</Text>
+                <Text style={styles.statusLabel}>체력</Text>
                 <Text style={styles.statusValue}>85/100</Text>
               </View>
               <View style={styles.statusItem}>
-                <Text style={styles.statusLabel}>Mana</Text>
+                <Text style={styles.statusLabel}>마나</Text>
                 <Text style={styles.statusValue}>60/80</Text>
               </View>
               <View style={styles.statusItem}>
-                <Text style={styles.statusLabel}>Experience</Text>
+                <Text style={styles.statusLabel}>경험치</Text>
                 <Text style={styles.statusValue}>1,250</Text>
               </View>
             </View>
@@ -72,7 +72,7 @@ const HomeScreen = () => {
 
         {/* 메인 메뉴 */}
         <View style={styles.menuSection}>
-          <Title style={styles.sectionTitle}>Game Menu</Title>
+          <Title style={styles.sectionTitle}>게임 메뉴</Title>
           
           <Card style={styles.menuCard} onPress={handleStartNewGame}>
             <Card.Content style={styles.menuCardContent}>
@@ -80,10 +80,8 @@ const HomeScreen = () => {
                 <Text style={styles.menuIconText}>🎮</Text>
               </View>
               <View style={styles.menuText}>
-                <Title style={styles.menuTitle}>New Game</Title>
-                <Paragraph style={styles.menuDescription}>
-                  Start a new adventure
-                </Paragraph>
+                <Title style={styles.menuTitle}>새 게임 시작</Title>
+                <Paragraph style={styles.menuDescription}>새로운 모험을 시작합니다</Paragraph>
               </View>
             </Card.Content>
           </Card>
@@ -94,10 +92,8 @@ const HomeScreen = () => {
                 <Text style={styles.menuIconText}>▶️</Text>
               </View>
               <View style={styles.menuText}>
-                <Title style={styles.menuTitle}>Continue</Title>
-                <Paragraph style={styles.menuDescription}>
-                  Resume your journey
-                </Paragraph>
+                <Title style={styles.menuTitle}>이어하기</Title>
+                <Paragraph style={styles.menuDescription}>이전 모험을 이어서 진행합니다</Paragraph>
               </View>
             </Card.Content>
           </Card>
@@ -108,10 +104,8 @@ const HomeScreen = () => {
                 <Text style={styles.menuIconText}>👤</Text>
               </View>
               <View style={styles.menuText}>
-                <Title style={styles.menuTitle}>Character</Title>
-                <Paragraph style={styles.menuDescription}>
-                  View your character info
-                </Paragraph>
+                <Title style={styles.menuTitle}>캐릭터 정보</Title>
+                <Paragraph style={styles.menuDescription}>내 캐릭터 정보를 확인합니다</Paragraph>
               </View>
             </Card.Content>
           </Card>
@@ -122,10 +116,8 @@ const HomeScreen = () => {
                 <Text style={styles.menuIconText}>📚</Text>
               </View>
               <View style={styles.menuText}>
-                <Title style={styles.menuTitle}>History</Title>
-                <Paragraph style={styles.menuDescription}>
-                  View past adventures
-                </Paragraph>
+                <Title style={styles.menuTitle}>히스토리</Title>
+                <Paragraph style={styles.menuDescription}>과거 모험 기록을 확인합니다</Paragraph>
               </View>
             </Card.Content>
           </Card>
@@ -137,7 +129,7 @@ const HomeScreen = () => {
         style={styles.fab}
         icon="cog"
         onPress={handleOpenSettings}
-        label="Settings"
+        label="설정"
       />
     </View>
   );

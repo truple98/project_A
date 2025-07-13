@@ -12,9 +12,9 @@ const AccountScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Account Screen</Text>
+      <Text style={styles.title}>계정 정보</Text>
       <Button onPress={() => navigation.goBack()}>
-        Back
+        뒤로가기
       </Button>
     </View>
   );
