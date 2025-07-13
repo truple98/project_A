@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { useTheme } from '../theme/ThemeContext';
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
 
 type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splash'>;
 
 const SplashScreen = () => {
   const navigation = useNavigation<SplashScreenNavigationProp>();
   const token = useSelector((state: RootState) => state.auth.token);
+  const { mode } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,22 +27,33 @@ const SplashScreen = () => {
   }, [navigation, token]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.appName}>project_A</Text>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#6200ee" />
-          <Text style={styles.loadingText}>로딩 중...</Text>
+    <GlassmorphismBackground isDark={mode === 'dark'}>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.appSection}>
+            <Text style={[styles.appName, { color: mode === 'dark' ? '#ffffff' : '#000000' }]}>
+              project_A
+            </Text>
+            <Text style={[styles.appSubtitle, { color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }]}>
+              텍스트 기반 RPG 게임
+            </Text>
+          </View>
+          
+          <View style={styles.loadingSection}>
+            <ActivityIndicator size="large" color={mode === 'dark' ? '#5A9FFF' : '#4285F4'} />
+            <Text style={[styles.loadingText, { color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }]}>
+              로딩 중...
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
+    </GlassmorphismBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f6f6f6',
   },
   content: {
     flex: 1,
@@ -48,19 +61,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
-  appName: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 40,
+  appSection: {
+    alignItems: 'center',
+    marginBottom: 60,
   },
-  loadingContainer: {
+  appName: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  appSubtitle: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  loadingSection: {
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 16,
     fontSize: 16,
-    color: '#666666',
+    marginTop: 20,
   },
 });
 

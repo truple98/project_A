@@ -4,19 +4,43 @@ import { Text, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
+import { useTheme } from '../theme/ThemeContext';
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
+import GlassmorphismCard from '../components/GlassmorphismCard';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Welcome'>;
 
 const WelcomeScreen = () => {
   const navigation = useNavigation<WelcomeScreenNavigationProp>();
+  const { theme, mode } = useTheme();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>환영합니다</Text>
-      <Button onPress={() => navigation.navigate('Login')}>
-        로그인 화면으로 이동
-      </Button>
-    </View>
+    <GlassmorphismBackground isDark={mode === 'dark'}>
+      <View style={styles.container}>
+        <GlassmorphismCard
+          isDark={mode === 'dark'}
+          opacity={0.2}
+          style={styles.card}
+        >
+          <Text style={[styles.title, { color: mode === 'dark' ? '#ffffff' : '#000000' }]}>환영합니다</Text>
+          <Button 
+            onPress={() => navigation.navigate('Login')}
+            mode="contained"
+            style={{ 
+              backgroundColor: mode === 'dark' ? '#5A9FFF' : '#4285F4',
+              shadowColor: mode === 'dark' ? '#000' : '#4285F4',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+            labelStyle={{ color: '#ffffff' }}
+          >
+            로그인 화면으로 이동
+          </Button>
+        </GlassmorphismCard>
+      </View>
+    </GlassmorphismBackground>
   );
 };
 
@@ -25,10 +49,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+  },
+  card: {
+    padding: 40,
+    alignItems: 'center',
+    minWidth: 300,
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    fontWeight: 'bold',
   },
 });
 
