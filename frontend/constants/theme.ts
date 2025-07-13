@@ -1,4 +1,5 @@
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import React from 'react';
 
 // Light Theme
 export const lightTheme = {
@@ -83,4 +84,17 @@ export const typography = {
     fontSize: 12,
     fontWeight: 'normal' as const,
   },
-} as const; 
+} as const;
+
+export const ThemeContext = React.createContext({
+  mode: 'light',
+  toggleTheme: () => {},
+});
+
+export function useTheme() {
+  const context = React.useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+} 
