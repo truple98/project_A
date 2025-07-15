@@ -1,0 +1,142 @@
+// 이 파일은 타입 B: '간결한 UI 스크린 구조' (간단한 정보 표시, 확인 화면) 의 형태에 대한 일반적인 코드 구조의 예시입니다.
+// 이 구조는 UI가 매우 간단하고, 복잡한 상태 관리나 상호작용이 적은 스크린에 적합합니다. 그룹 A의 구조에서 불필요한 요소를 제거하여 더욱 간결하게 만듭니다. ScreenHeader 대신 간단한 헤더를 직접 구현하거나, 아예 헤더가 없는 경우도 있습니다.
+
+// 1. React 및 외부 라이브러리 임포트 (알파벳 순서)
+import React from 'react';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+// 필요에 따라 react-native-paper의 Button 컴포넌트 추가
+
+// 2. 내부 컴포넌트 및 유틸리티 임포트 (알파벳 순서)
+import { useTheme } from '../theme/ThemeContext';
+import { RootStackParamList } from '../types';
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
+import GlassmorphismCard from '../components/GlassmorphismCard';
+// ScreenHeader가 필요 없는 경우 임포트하지 않음
+
+// 3. 타입 정의
+type CurrentSimpleScreenNavigationProp = StackNavigationProp<RootStackParamList, 'YourSimpleScreenName'>;
+
+// 4. 상수 및 유틸리티 변수 (필요한 경우)
+
+// 5. 메인 스크린 컴포넌트 함수 정의
+const YourSimpleScreenName = () => {
+  // 5.1. Hooks 선언
+  const navigation = useNavigation<CurrentSimpleScreenNavigationProp>();
+  const { theme, mode } = useTheme();
+
+  // 5.2. 이벤트 핸들러 (useCallback으로 래핑)
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  // 5.3. JSX 반환
+  return (
+    <GlassmorphismBackground isDark={mode === 'dark'}>
+      <View style={styles.container}>
+        <GlassmorphismCard
+          isDark={mode === 'dark'}
+          opacity={0.2} // 투명도 조절
+          style={styles.card}
+        >
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            간단한 화면 제목
+          </Text>
+          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+            간단한 정보를 표시합니다.
+          </Text>
+          <TouchableOpacity
+            onPress={handleGoBack}
+            style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          >
+            <Text style={[styles.buttonText, { color: theme.colors.text }]}>뒤로가기</Text>
+          </TouchableOpacity>
+          {/* react-native-paper Button 사용 예시 */}
+          {/* <Button
+            onPress={handleGoBack}
+            mode="outlined" // 또는 "contained", "text"
+            style={{ borderColor: theme.colors.primary }}
+            labelStyle={{ color: theme.colors.primary }}
+          >
+            뒤로가기
+          </Button> */}
+        </GlassmorphismCard>
+      </View>
+    </GlassmorphismBackground>
+  );
+};
+
+// 6. 스타일 정의
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.design.spacing.xl, // 테마 간격 활용
+  },
+  card: {
+    padding: theme.design.spacing.xxxl, // 테마 간격 활용
+    alignItems: 'center',
+    minWidth: 300,
+    borderRadius: theme.design.borderRadius.md, // 테마 경계선 반경 활용
+  },
+  title: {
+    fontSize: theme.typography.sizes.xxl, // 테마 폰트 크기 활용
+    marginBottom: theme.design.spacing.xl,
+    fontWeight: theme.typography.weights.bold,
+  },
+  subtitle: {
+    fontSize: theme.typography.sizes.md,
+    marginBottom: theme.design.spacing.xl,
+  },
+  button: {
+    paddingVertical: theme.design.spacing.md,
+    paddingHorizontal: theme.design.spacing.lg,
+    borderRadius: theme.design.borderRadius.lg,
+    marginTop: theme.design.spacing.xxl,
+  },
+  buttonText: {
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
+  },
+});
+
+// 7. 컴포넌트 내보내기
+export default YourSimpleScreenName;
+
+
+
+
+ 그룹 B: '중간 수준의 리팩토링'이 필요한 스크린
+이 그룹의 파일들은 구조적으로는 그룹 A와 유사하지만, 내부 로직의 간소함 또는 외부 종속성 유무로 인해 더욱 간결한 형태를 유지하고 있습니다. 이들은 그룹 A의 가이드라인을 따르되, 불필요한 복잡성을 제거하는 데 초점을 맞출 수 있습니다.
+
+포함 파일:
+
+RecordDetailScreen.tsx
+
+StatusScreen.tsx
+
+VersionInfoScreen.tsx
+
+WelcomeScreen.tsx
+
+SplashScreen.tsx
+
+분류 이유:
+
+이 스크린들은 UI가 상대적으로 간단하고, 복잡한 상태나 사용자 상호작용 로직이 적습니다.
+
+일부는 ScreenHeader 컴포넌트를 사용하지 않고 인라인으로 뒤로가기 버튼 등을 처리하고 있습니다.
+
+LoginScreen.tsx와 RegisterScreen.tsx는 유사하게 KeyboardAvoidingView와 폼 입력 요소를 사용하고 Redux를 연동하고 있어, 별도의 패턴을 가져갈 수 있지만, 기본적인 컴포넌트 구조는 일반적인 스크린과 유사하여 그룹 A에 포함했습니다.
+
+일치화 가이드라인 (초점):
+
+그룹 A의 모든 가이드라인을 적용합니다.
+
+간결성 유지: UI가 간단한 스크린은 불필요한 ScrollView나 복잡한 컴포넌트 중첩을 피하고, 최소한의 구조를 유지하도록 합니다.
+
+공통 컴포넌트 활용: ScreenHeader와 같이 반복적으로 사용되는 UI 요소는 최대한 공통 컴포넌트로 분리하여 사용합니다. (예: RecordDetailScreen, StatusScreen, VersionInfoScreen, WelcomeScreen도 ScreenHeader를 도입할 수 있습니다.)
+
+Redux 연동: LoginScreen.tsx와 SplashScreen.tsx는 Redux (useDispatch, useSelector)를 사용하는데, 이 부분의 임포트 위치 및 로직 처리 방식도 일반 구조 내에서 일관성을 유지하도록 합니다.

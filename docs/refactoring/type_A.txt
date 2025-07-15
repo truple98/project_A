@@ -1,0 +1,351 @@
+// 이 파일은 타입 A. '일반적인 스크린 구조' (대부분의 UI 중심 스크린) 의 형태에 대한 일반적인 코드 구조의 예시 입니다.
+// 이 구조는 대부분의 모바일 앱 화면에 적용될 수 있는 가장 보편적이고 권장되는 패턴입니다. React Hooks와 TypeScript, 그리고 테마 시스템을 적극적으로 활용합니다.
+
+
+// 1. React 및 외부 라이브러리 임포트 (알파벳 순서)
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Platform, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// 필요에 따라 react-native-paper, redux 관련 임포트 추가 (예: Text, Button, TextInput, useDispatch, useSelector)
+
+// 2. 내부 컴포넌트 및 유틸리티 임포트 (알파벳 순서)
+import { useTheme } from '../theme/ThemeContext';
+import { RootStackParamList, ConsequenceType } from '../types'; // 프로젝트의 타입 정의
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
+import GlassmorphismCard from '../components/GlassmorphismCard';
+import { ScreenHeader } from '../components/ScreenHeader'; // 공통 헤더 컴포넌트
+import CustomToggle from '../components/CustomToggle'; // SettingsScreen에서 사용
+import FadeDivider from '../components/FadeDivider'; // SettingsScreen에서 사용
+
+// 3. 타입 정의 (컴포넌트 Props, 내부 데이터 타입 등)
+// StackNavigationProp의 RootStackParamList에 해당 스크린 이름이 정의되어 있어야 합니다.
+type CurrentScreenNavigationProp = StackNavigationProp<RootStackParamList, 'YourScreenName'>;
+// 만약 route.params를 사용한다면 RouteProp도 정의합니다.
+// type CurrentScreenRouteProp = RouteProp<RootStackParamList, 'YourScreenName'>;
+
+// 4. 상수 및 유틸리티 변수 정의 (컴포넌트 함수 외부에 선언)
+// Dimensions 등 컴포넌트 라이프사이클과 무관한 전역 상수
+const { width } = Dimensions.get('window'); // 예시: 화면 너비 계산 시
+
+// 5. 메인 스크린 컴포넌트 함수 정의
+const YourScreenName = () => {
+  // 5.1. Hooks 선언 (useNavigation, useRoute, useState, useEffect, useTheme 등)
+  const navigation = useNavigation<CurrentScreenNavigationProp>();
+  // const route = useRoute<CurrentScreenRouteProp>(); // route.params를 사용하는 경우
+  const { theme, mode } = useTheme(); // 커스텀 테마 접근
+
+  // 상태 변수 선언 (useState)
+  const [someState, setSomeState] = useState<string>('');
+
+  // Redux 등 전역 상태 접근 (필요한 경우)
+  // const token = useSelector((state: RootState) => state.auth.token);
+  // const dispatch = useDispatch();
+
+  // 5.2. 데이터 Mock 또는 외부에서 가져오는 로직 (필요한 경우)
+  // API 호출 또는 더미 데이터
+  const exampleData = [
+    // ... 데이터 배열
+  ];
+
+  // 5.3. 이벤트 핸들러 및 유틸리티 함수 (useCallback으로 래핑하여 최적화)
+  // 성능 최적화를 위해 의존성 배열에 변화하는 값만 포함
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]); // navigation 객체는 거의 변하지 않으므로 안전
+
+  const handleAction = useCallback(() => {
+    // 특정 액션 로직
+    // setSomeState('updated');
+  }, [someState]); // someState가 변경될 때만 함수 재생성
+
+  // 5.4. useEffect (사이드 이펙트 관리)
+  useEffect(() => {
+    // 컴포넌트 마운트 시 한 번만 실행될 로직
+    // 예: 데이터 로딩, 구독 설정
+    // console.log('Screen mounted');
+    return () => {
+      // 컴포넌트 언마운트 시 클린업 로직
+      // 예: 타이머 해제, 구독 해제
+    };
+  }, []); // 빈 배열: 마운트 시 한 번, 언마운트 시 한 번 실행
+
+  useEffect(() => {
+    // 특정 상태(mode)가 변경될 때마다 실행될 로직
+    // console.log('Theme mode changed to:', mode);
+  }, [mode]); // mode가 의존성에 포함
+
+  // 5.5. JSX 반환 (컴포넌트의 UI 구조)
+  // 가독성을 위해 큰 섹션별로 View를 나누고 주석 추가
+  return (
+    <GlassmorphismBackground isDark={mode === 'dark'}>
+      {/* 키보드 대응이 필요한 화면의 경우 KeyboardAvoidingView 사용 */}
+      {/* <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      > */}
+        <View style={styles.container}>
+          {/* ScreenHeader 컴포넌트 사용 (뒤로가기 버튼, 제목 포함) */}
+          {/* ScreenHeader를 사용하는 스크린은 상단 GlassmorphismCard의 header 스타일을 ScreenHeader로 통합 고려 */}
+          <ScreenHeader title="화면 제목" onBackPress={handleGoBack} />
+
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* 메인 콘텐츠 영역 */}
+            <GlassmorphismCard style={styles.mainCard}>
+              <Text style={[{ color: theme.colors.text, fontSize: theme.typography.sizes.lg }]}>
+                이곳에 화면의 주요 콘텐츠를 배치합니다.
+              </Text>
+              <TouchableOpacity
+                onPress={handleAction}
+                style={[styles.button, { backgroundColor: theme.colors.primary }]}
+              >
+                <Text style={[styles.buttonText, { color: theme.colors.text }]}>액션 버튼</Text>
+              </TouchableOpacity>
+            </GlassmorphismCard>
+
+            {/* 다른 섹션들... */}
+
+          </ScrollView>
+        </View>
+      {/* </KeyboardAvoidingView> */}
+    </GlassmorphismBackground>
+  );
+};
+
+// 6. 스타일 정의 (컴포넌트 함수 외부에 StyleSheet.create로 선언)
+//    - `theme.colors`, `theme.typography`, `theme.design.spacing`, `theme.design.borderRadius` 등을 적극 활용
+//    - `mode`에 따른 조건부 스타일은 `useTheme`에서 가져온 `theme` 객체를 직접 참조
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // backgroundColor: theme.colors.background, // 배경은 GlassmorphismBackground에서 처리
+  },
+  scrollContent: {
+    paddingHorizontal: 20, // theme.design.spacing.xl 등 활용
+    paddingBottom: 32,     // theme.design.spacing.xxxl 등 활용
+  },
+  mainCard: {
+    // GlassmorphismCard는 이미 배경색, 그림자 등이 정의되어 있으므로 여기서는 추가 스타일만 지정
+    padding: 24, // theme.design.spacing.xxl 등 활용
+    borderRadius: 16, // theme.design.borderRadius.lg 등 활용
+    marginBottom: 20, // theme.design.spacing.xl 등 활용
+  },
+  button: {
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 20,
+    // 그림자 등은 theme.design.shadows를 활용하거나 GlassmorphismCard의 기본 그림자 활용
+  },
+  buttonText: {
+    fontSize: 16, // theme.typography.sizes.md
+    fontWeight: '600', // theme.typography.weights.semibold
+  },
+  // ... 기타 섹션별, 컴포넌트별 스타일 정의
+});
+
+// 7. 컴포넌트 내보내기
+export default YourScreenName;
+
+
+
+
+
+
+제시해주신 모든 18개 파일(RecordDetailScreen.tsx, HistoryScreen.tsx, InventoryScreen.tsx, HomeScreen.tsx, CharacterScreen.tsx, GameStartScreen.tsx, HelpScreen.tsx, EndingScreen.tsx, AccountScreen.tsx, LoginScreen.tsx, SettingsScreen.tsx, StatusScreen.tsx, StoryScreen.tsx, WelcomeScreen.tsx, VersionInfoScreen.tsx, ResultScreen.tsx, RegisterScreen.tsx, SplashScreen.tsx)을 모두 전달받았습니다. 이제 이 파일들의 코드 구조를 분석하고, 일관성을 확보하기 위한 분류 및 리팩토링 가이드라인을 제공해 드리겠습니다.
+
+스크린 파일의 일반적인 코드 구조 (목표)
+먼저, 우리가 목표로 할 React Native 스크린 파일의 **'가장 일반적인 코드 구조'**를 명확히 정의합니다. 이 구조는 유지보수성, 가독성, 그리고 React Native/TypeScript의 모범 사례를 따르는 데 중점을 둡니다.
+
+TypeScript
+
+// 1. React 및 외부 라이브러리 임포트 (알파벳 순서)
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Platform, Dimensions } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // 아이콘 패키지 예시
+// ... 기타 외부 라이브러리 (react-native-paper, redux 등)
+
+// 2. 내부 컴포넌트 및 유틸리티 임포트 (알파벳 순서)
+import { useTheme } from '../theme/ThemeContext'; // 커스텀 테마
+import { RootStackParamList, ConsequenceType } from '../types'; // 타입 정의
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
+import GlassmorphismCard from '../components/GlassmorphismCard';
+import { ScreenHeader } from '../components/ScreenHeader';
+import CustomToggle from '../components/CustomToggle';
+import FadeDivider from '../components/FadeDivider';
+// ... 기타 재사용 가능한 컴포넌트, 유틸리티 함수 등
+
+// 3. 타입 정의 (컴포넌트 props, 내부 데이터 타입 등)
+type CurrentScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CurrentScreenName'>;
+// type CurrentScreenRouteProp = RouteProp<RootStackParamList, 'CurrentScreenName'>; // route.params 사용하는 경우
+
+// 4. 상수 및 유틸리티 변수 정의 (컴포넌트 외부에 선언)
+const { width } = Dimensions.get('window'); // 예시: 화면 너비
+
+// 5. 컴포넌트 함수 정의 (메인 스크린 컴포넌트)
+const CurrentScreenName = () => {
+  // 5.1. Hooks 선언 (useNavigation, useRoute, useState, useEffect, useTheme 등)
+  const navigation = useNavigation<CurrentScreenNavigationProp>();
+  // const route = useRoute<CurrentScreenRouteProp>(); // route.params 사용하는 경우
+  const { theme, mode } = useTheme(); // 테마 접근
+  const [stateVariable, setStateVariable] = useState<string>('');
+
+  // 5.2. 데이터 Mock 또는 외부에서 가져오는 로직 (필요한 경우)
+  // const data = useSelector((state: RootState) => state.data); // Redux 사용 예시
+  const mockData = [
+    // ... 데이터
+  ];
+
+  // 5.3. 이벤트 핸들러 및 유틸리티 함수 (useCallback으로 래핑하여 최적화)
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const someHelperFunction = useCallback((param: string) => {
+    // ... 로직
+  }, [mode]);
+
+  // 5.4. useEffect (사이드 이펙트 관리)
+  useEffect(() => {
+    // 컴포넌트 마운트 시 동작
+  }, []); // 의존성 배열
+
+  // 5.5. JSX 반환 (컴포넌트의 UI 구조)
+  return (
+    <GlassmorphismBackground isDark={mode === 'dark'}>
+      <View style={styles.container}>
+        {/* ScreenHeader는 공통 컴포넌트로 분리하여 사용 */}
+        <ScreenHeader title="현재 스크린" onBackPress={handleGoBack} />
+
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {/* UI 요소들 */}
+          <GlassmorphismCard style={styles.card}>
+            <Text style={[{ color: theme.colors.text }]}>콘텐츠</Text>
+          </GlassmorphismCard>
+        </ScrollView>
+      </View>
+    </GlassmorphismBackground>
+  );
+};
+
+// 6. 스타일 정의 (컴포넌트 함수 외부에 StyleSheet.create로 선언)
+//    - `theme.colors`, `theme.typography`, `theme.design.spacing`, `theme.design.borderRadius` 등을 적극 활용
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background, // 예시
+  },
+  scrollContent: {
+    paddingHorizontal: theme.design.spacing.lg,
+    paddingBottom: theme.design.spacing.xxl,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.design.borderRadius.md,
+    padding: theme.design.spacing.md,
+  },
+  // ... 기타 스타일
+});
+
+// 7. 컴포넌트 내보내기
+export default CurrentScreenName;
+
+
+
+
+
+
+
+파일 분류 및 리팩토링 가이드라인
+
+
+
+
+
+
+📏 그룹 A: '일반적인 스크린 구조'로 쉽게 일치시킬 수 있는 파일
+이 그룹의 파일들은 이미 기본적인 구조를 잘 따르고 있으며, 주로 임포트 순서 정리, 스타일 내 테마 변수(theme.colors, theme.typography, theme.design.spacing 등)의 일관된 적용, 그리고 사소한 스타일 정의 방식 통일을 통해 목표 구조에 완벽히 부합할 수 있습니다.
+
+포함 파일:
+
+InventoryScreen.tsx
+
+EndingScreen.tsx
+
+HomeScreen.tsx
+
+HelpScreen.tsx
+
+GameStartScreen.tsx
+
+CharacterScreen.tsx
+
+AccountScreen.tsx
+
+SettingsScreen.tsx
+
+StoryScreen.tsx
+
+ResultScreen.tsx
+
+LoginScreen.tsx
+
+RegisterScreen.tsx
+
+분류 이유:
+
+모두 함수형 컴포넌트로 작성되어 있습니다.
+
+useNavigation, useTheme 등 React Hooks를 일관되게 사용하고 있습니다.
+
+스타일은 대부분 파일 하단에 **StyleSheet.create**로 정의되어 있습니다.
+
+대부분의 UI 로직이 컴포넌트 함수 내부에 잘 정리되어 있습니다.
+
+일치화 가이드라인 (초점):
+
+임포트 순서 통일:
+
+React 및 내장 Hooks
+
+react-native 핵심 컴포넌트
+
+@react-navigation 관련 Hooks 및 타입
+
+react-native-vector-icons 등 외부 UI/유틸리티 라이브러리
+
+Redux 등 외부 상태 관리 라이브러리
+
+프로젝트 내부 components (GlassmorphismBackground, ScreenHeader 등)
+
+프로젝트 내부 theme, types 등 유틸리티
+
+각 섹션 내에서는 알파벳 순서를 유지합니다.
+
+스타일 내 테마 변수 활용 극대화:
+
+color: mode === 'dark' ? '#FFFFFF' : '#1A1A1A' 와 같이 직접 하드코딩된 색상 대신, color: theme.colors.text 또는 color: theme.colors.textSecondary 와 같이 useTheme에서 가져온 theme 객체의 변수를 적극적으로 활용합니다.
+
+패딩, 마진, 폰트 크기 등도 theme.design.spacing, theme.typography.sizes 등을 활용하여 통일성을 높입니다. (예: paddingHorizontal: 20 대신 paddingHorizontal: theme.design.spacing.xl).
+
+일부 파일에서 Platform.select 내부에 shadowColor를 하드코딩하는 경우가 있는데, 이것도 theme.design.shadows.md.shadowColor와 같이 theme 객체에서 가져오도록 수정하는 것을 고려할 수 있습니다.
+
+useCallback 및 useMemo 적용:
+
+handleBack, handleItemPress 등 이벤트 핸들러 함수를 useCallback으로 래핑하여 컴포넌트 리렌더링 시 함수 재생성을 방지하고 성능을 최적화합니다.
+
+복잡한 계산 로직 (getRarityColor, getStatPercentage 등)은 useMemo로 래핑하여 불필요한 재계산을 방지할 수 있습니다.
+
+Dimensions.get('window').width와 같은 상수 정의 위치 통일:
+
+컴포넌트 함수 외부에 선언하거나, 또는 src/utils/metrics.ts와 같은 별도의 유틸리티 파일로 분리하는 것을 고려합니다. (현재 InventoryScreen.tsx는 컴포넌트 밖에 선언되어 있어 양호합니다.)
+
+주석 스타일 통일:
+
+주석의 종류(TODO, FIXME 등)와 형식(// 주석 또는 /* 주석 */)을 통일합니다.

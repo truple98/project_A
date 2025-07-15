@@ -1,0 +1,32 @@
+✅ 백엔드 기술 스택 (Node.js + Express 기반 TRPG 게임 서버)
+
+🧠 언어 및 런타임
+- TypeScript: 정적 타입 기반 안정성 확보
+- Node.js: 이벤트 기반 비동기 런타임
+
+🔧 웹 프레임워크
+- Express.js: 경량화된 웹 서버 프레임워크, 미들웨어 구성 유연
+
+🗃️ 데이터베이스 및 ORM
+- PostgreSQL: 관계형 데이터베이스, 복잡한 데이터 모델에 강함
+- Prisma ORM: 타입 안전 + 직관적인 스키마 기반 ORM, 자동 마이그레이션 지원
+
+🔐 인증 및 보안
+- JWT (JSON Web Token): 토큰 기반 인증 (로그인, 세션 유지)
+- CORS: Cross-Origin Resource Sharing 제어
+- Helmet: HTTP 보안 헤더 설정을 통한 보안 강화
+
+✅ 데이터 유효성 검사
+- Zod: 스키마 기반 TypeScript 친화적 유효성 검증 라이브러리
+
+📝 로깅
+- 개발 초기: console.log() 위주 디버깅
+- 테스트/운영 단계: morgan 또는 winston (요청 기록 및 에러 로그 분석용)
+
+🧪 테스트 (추후 확장)
+- Jest (또는 Vitest): 단위 테스트, 통합 테스트를 위한 프레임워크
+
+📦 기타
+- dotenv: 환경 변수 설정
+- nodemon: 개발 중 자동 재시작
+- ts-node-dev: TypeScript 핫 리로딩 개발 서버

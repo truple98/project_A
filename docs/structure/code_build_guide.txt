@@ -1,0 +1,181 @@
+네, AI가 생성한 코드의 일관성 부족은 흔히 겪는 문제입니다. 일관된 코드 구조는 가독성, 유지보수성, 확장성에 매우 중요하므로 리팩토링은 좋은 선택입니다.
+
+이상적인 tsx 파일의 코드 구조는 프로젝트의 복잡성이나 팀의 컨벤션에 따라 달라질 수 있지만, 일반적으로 React/React Native 프로젝트에서 screen (또는 페이지/뷰) 컴포넌트를 구현할 때 권장되는 구조는 다음과 같습니다. 🚀
+
+이상적인 Screen tsx 파일 코드 구조
+TypeScript
+
+// 1. 외부 라이브러리/모듈 임포트
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack'; // 네비게이션 타입 정의
+import SomeCustomComponent from '../components/SomeCustomComponent'; // 내부 컴포넌트
+import { useSomeContext } from '../contexts/SomeContext'; // 전역 상태/컨텍스트
+import { fetchData } from '../api/someApi'; // API 호출
+
+// 2. 타입 정의 (Types)
+// 이 스크린에 필요한 Props, State, 내부 함수 등의 타입을 정의합니다.
+// 복잡한 타입은 별도의 types.ts 파일로 분리할 수도 있습니다.
+type RootStackParamList = {
+  Home: undefined;
+  Details: { itemId: string };
+  // ...다른 스크린들
+};
+
+type Props = StackScreenProps<RootStackParamList, 'YourScreenName'>; // 해당 스크린의 이름으로 변경
+
+interface DataItem {
+  id: string;
+  name: string;
+  // ...
+}
+
+// 3. 상수 정의 (Constants)
+// 컴포넌트 내에서 사용되는 상수 값을 정의합니다.
+const DEFAULT_ITEM_COUNT = 10;
+const SCREEN_TITLE = '나의 화면';
+
+// 4. 메인 컴포넌트 (Functional Component)
+// 일반적으로 함수형 컴포넌트와 React Hooks를 사용합니다.
+const YourScreenName: React.FC<Props> = ({ navigation, route }) => {
+  // 4.1. 상태 관리 (State)
+  // 컴포넌트 내부에서 관리되는 상태를 정의합니다.
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [data, setData] = useState<DataItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  // 4.2. 컨텍스트 또는 전역 상태 (Context / Global State)
+  // 전역 상태나 컨텍스트를 사용합니다.
+  const { user, theme } = useSomeContext();
+
+  // 4.3. 이펙트 (Effects)
+  // 컴포넌트가 마운트되거나 특정 상태가 변경될 때 실행되는 로직입니다.
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        const result = await fetchData();
+        setData(result);
+      } catch (err) {
+        setError('데이터 로드 실패');
+        Alert.alert('오류', '데이터를 불러오는 데 실패했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []); // 빈 배열은 컴포넌트 마운트 시 한 번만 실행됨
+
+  // 4.4. 콜백 함수 (Callback Functions)
+  // 자식 컴포넌트에 넘겨주거나 특정 이벤트에 연결될 함수를 useCallback으로 래핑하여 최적화합니다.
+  const handleItemPress = useCallback((itemId: string) => {
+    navigation.navigate('Details', { itemId });
+  }, [navigation]);
+
+  const handleRefresh = useCallback(async () => {
+    // 새로고침 로직
+  }, []);
+
+  // 4.5. 메모이제이션된 값 (Memoized Values)
+  // 계산 비용이 높은 값이나 객체를 useMemo로 래핑하여 불필요한 재계산을 방지합니다.
+  const filteredData = useMemo(() => {
+    return data.filter(item => item.id.startsWith('A'));
+  }, [data]);
+
+  // 4.6. 조건부 렌더링 또는 초기 로딩 UI
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <Text>로딩 중...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  // 4.7. UI 렌더링 (Return JSX)
+  // 컴포넌트의 UI 구조를 정의합니다.
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>{SCREEN_TITLE}</Text>
+      <Text style={styles.greeting}>안녕하세요, {user?.name}님!</Text>
+      {filteredData.map(item => (
+        <TouchableOpacity key={item.id} style={styles.item} onPress={() => handleItemPress(item.id)}>
+          <Text style={styles.itemText}>{item.name}</Text>
+        </TouchableOpacity>
+      ))}
+      <SomeCustomComponent someProp="hello" />
+      <TouchableOpacity style={styles.button} onPress={handleRefresh}>
+        <Text style={styles.buttonText}>새로고침</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+// 5. 스타일 정의 (Styles)
+// StyleSheet.create를 사용하여 스타일을 정의합니다.
+// 이 방식을 사용하면 스타일 객체가 한 번만 생성되어 성능에 유리합니다.
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  greeting: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+  },
+  item: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  itemText: {
+    fontSize: 18,
+    color: '#444',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
+});
+
+// 6. 컴포넌트 내보내기 (Export)
+export default YourScreenName;

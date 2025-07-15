@@ -1,0 +1,26 @@
+✅ 프론트엔드 기술 스택 (React Native 기반 TRPG 게임 앱)
+
+🔧 핵심 프레임워크 및 언어
+- React Native: 모바일 앱 크로스플랫폼 개발 (iOS / Android)
+- TypeScript: 정적 타입 시스템으로 안정성 확보
+- Expo (EAS Build): 빠른 빌드와 테스트 환경 제공
+
+🎨 UI 라이브러리
+- React Native Paper: Material Design 기반 컴포넌트, React Native Web 호환성 우수
+- React Native Vector Icons: 다양한 테마 아이콘 제공
+
+📦 상태 관리
+- Redux Toolkit: 구조화된 전역 상태 관리 (createSlice 등)
+- redux-thunk 또는 RTK 기본 비동기 미들웨어 사용
+- Redux DevTools: 상태 디버깅 용이
+
+🔗 서버 통신 및 데이터 동기화
+- React Query: 서버 상태 캐싱, useQuery/useMutation 훅 제공
+- Axios: React Query 내부 또는 커스텀 HTTP 클라이언트로 사용
+- 자동 로딩/에러/재시도 처리
+
+⚙️ 개발 및 테스트 환경
+- Expo CLI: npx expo start로 QR, 웹, 에뮬레이터 테스트
+- Android 에뮬레이터 / iOS 시뮬레이터 / Expo Go 지원
+- 타입 검사 및 코드 품질 도구: tsc, ESLint, Prettier
+- 환경 변수: react-native-dotenv 사용
