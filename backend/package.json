@@ -15,7 +15,7 @@
     "db:studio": "prisma studio"
   },
   "keywords": ["rpg", "game", "llm", "trpg", "nodejs"],
-  "author": "TRPG Game Team",
+  "author": "Binary Studio",
   "license": "MIT",
   "dependencies": {
     "express": "^4.19.2",

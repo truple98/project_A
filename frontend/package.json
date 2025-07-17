@@ -21,7 +21,7 @@
     "expo",
     "trpg"
   ],
-  "author": "TRPG Game Team",
+  "author": "Binary Studio",
   "license": "MIT",
   "dependencies": {
     "@expo/metro-runtime": "~3.1.3",

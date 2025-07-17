@@ -6,12 +6,12 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-// 2. Internal imports
-import CustomToggle from '../../src/components/CustomToggle';
-import FadeDivider from '../../src/components/FadeDivider';
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+// 2. 내부 컴포넌트 및 유틸리티 임포트
 import { useTheme } from '../../theme/ThemeContext';
+import CustomToggle from '../../components/CustomToggle';
+import FadeDivider from '../../components/FadeDivider';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 import { RootStackParamList } from '../../types';
 
 // 3. Type definitions
@@ -150,12 +150,11 @@ const SettingsScreen = () => {
 
   // 5.5 JSX Return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         {/* 헤더 - 글래스모피즘 효과 */}
         <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.2}
+          elevationLevel={2}
           style={styles.header}
         >
           <TouchableOpacity 
@@ -166,7 +165,7 @@ const SettingsScreen = () => {
               styles.backButtonText,
               { 
                 color: theme.colors.text,
-                fontSize: theme.typography.sizes.xl,
+                fontSize: 20,
               }
             ]}>←</Text>
           </TouchableOpacity>
@@ -176,16 +175,16 @@ const SettingsScreen = () => {
               styles.headerTitle, 
               { 
                 color: theme.colors.text,
-                fontSize: theme.typography.sizes.xxl,
-                fontWeight: theme.typography.weights.bold,
+                fontSize: 24,
+                fontWeight: '700',
               }
             ]}>설정</Text>
             <Text style={[
               styles.headerSubtitle, 
               { 
                 color: theme.colors.textSecondary,
-                fontSize: theme.typography.sizes.sm,
-                fontWeight: theme.typography.weights.regular,
+                fontSize: 13,
+                fontWeight: '400',
               }
             ]}>앱을 개인화하세요</Text>
           </View>
@@ -210,16 +209,15 @@ const SettingsScreen = () => {
                   styles.sectionTitle, 
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.lg,
-                    fontWeight: theme.typography.weights.bold,
+                    fontSize: 18,
+                    fontWeight: '600',
                   }
                 ]}>{section.title}</Text>
               </View>
               
               {/* 카테고리 단일 박스 */}
               <GlassmorphismCard
-                isDark={mode === 'dark'}
-                opacity={0.18}
+                elevationLevel={1}
                 style={styles.categoryCard}
               >
                 {section.items.map((item, itemIndex) => (
@@ -238,8 +236,8 @@ const SettingsScreen = () => {
                             styles.settingLabel, 
                             { 
                               color: theme.colors.text,
-                              fontSize: theme.typography.sizes.md,
-                              fontWeight: theme.typography.weights.semibold,
+                              fontSize: 15,
+                              fontWeight: '500',
                             }
                           ]}>{item.label}</Text>
                           {item.type === 'button' && item.value && (
@@ -247,8 +245,8 @@ const SettingsScreen = () => {
                               styles.settingValue, 
                               { 
                                 color: theme.colors.textSecondary,
-                                fontSize: theme.typography.sizes.sm,
-                                fontWeight: theme.typography.weights.regular,
+                                fontSize: 13,
+                                fontWeight: '400',
                               }
                             ]}>{item.value}</Text>
                           )}
@@ -270,8 +268,8 @@ const SettingsScreen = () => {
                               styles.settingButtonText,
                               { 
                                 color: theme.colors.textSecondary,
-                                fontSize: theme.typography.sizes.md,
-                                fontWeight: theme.typography.weights.semibold,
+                                fontSize: 15,
+                                fontWeight: '500',
                               }
                             ]}>→</Text>
                           </TouchableOpacity>
@@ -295,8 +293,7 @@ const SettingsScreen = () => {
           {/* 로그아웃 버튼 */}
           <View style={styles.logoutSection}>
             <GlassmorphismCard
-              isDark={mode === 'dark'}
-              opacity={0.18}
+              elevationLevel={1}
               style={styles.logoutCard}
             >
               <TouchableOpacity 
@@ -315,8 +312,8 @@ const SettingsScreen = () => {
                     styles.logoutText,
                     { 
                       color: theme.colors.error,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
+                      fontSize: 15,
+                      fontWeight: '500',
                     }
                   ]}>로그아웃</Text>
                 </View>

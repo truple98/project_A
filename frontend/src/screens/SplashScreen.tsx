@@ -6,7 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 
 // 2. Internal imports
-import GlassmorphismBackground from '../src/components/GlassmorphismBackground';
+import GlassmorphismBackground from '../components/GlassmorphismBackground';
 import { RootState } from '../store';
 import { useTheme } from '../theme/ThemeContext';
 import { RootStackParamList } from '../types';

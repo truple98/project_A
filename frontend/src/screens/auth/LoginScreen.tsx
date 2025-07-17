@@ -6,10 +6,11 @@ import { useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { RootStackParamList } from '../../types';
-import { setToken, setUser } from '../../store/slices/authSlice';
+import { setTokens, setUser } from '../../store/slices/authSlice';
+import { User } from '../../services/authAPI';
 import { useTheme } from '../../theme/ThemeContext';
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 
 // TypeScript Interfaces
 interface LoginFormData {
@@ -17,23 +18,16 @@ interface LoginFormData {
   password: string;
 }
 
-interface UserData {
-  id: string;
-  email: string;
-  username: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 // Constants
-const DEMO_USER_DATA: UserData = {
+const DEMO_USER_DATA: User = {
   id: 'demo',
   email: 'demo@example.com',
   username: 'DemoUser',
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  lastLoginAt: new Date().toISOString(),
+  status: 'active',
 };
 
 const LOGIN_DELAY = 1500;
@@ -73,13 +67,18 @@ const LoginScreen = () => {
     
     // TODO: 실제 API 호출로 교체
     setTimeout(() => {
-      dispatch(setToken('dummy_token'));
+      dispatch(setTokens({ 
+        accessToken: 'dummy_access_token',
+        refreshToken: 'dummy_refresh_token',
+        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24시간 후
+      }));
       dispatch(setUser({ 
         id: '1', 
         email: formData.email, 
         username: 'Player1',
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        status: 'active',
       }));
       setIsLoading(false);
       navigation.replace('Home');
@@ -91,14 +90,18 @@ const LoginScreen = () => {
   }, [navigation]);
 
   const handleDemoMode = useCallback(() => {
-    dispatch(setToken('demo_token'));
+    dispatch(setTokens({ 
+      accessToken: 'demo_access_token',
+      refreshToken: 'demo_refresh_token',
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000)
+    }));
     dispatch(setUser(DEMO_USER_DATA));
     navigation.replace('Home');
   }, [dispatch, navigation]);
 
   // 5.5 JSX return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <KeyboardAvoidingView 
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -115,16 +118,16 @@ const LoginScreen = () => {
                   styles.welcomeTitle, 
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.xxl,
-                    fontWeight: theme.typography.weights.bold,
+                    fontSize: 24,
+                    fontWeight: '700',
                   }
                 ]}>다시 오신 것을{'\n'}환영합니다!</Text>
                 <Text style={[
                   styles.welcomeSubtitle, 
                   { 
                     color: theme.colors.textSecondary,
-                    fontSize: theme.typography.sizes.sm,
-                    fontWeight: theme.typography.weights.regular,
+                    fontSize: 13,
+                    fontWeight: '400',
                   }
                 ]}>모험을 계속하려면 로그인하세요</Text>
               </View>
@@ -132,8 +135,7 @@ const LoginScreen = () => {
 
             {/* 로그인 폼 */}
             <GlassmorphismCard
-              isDark={mode === 'dark'}
-              opacity={0.2}
+              elevationLevel={2}
               style={styles.formCard}
             >
               {/* 이메일 입력 */}
@@ -142,15 +144,15 @@ const LoginScreen = () => {
                   styles.inputLabel, 
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.sm,
-                    fontWeight: theme.typography.weights.medium,
+                    fontSize: 13,
+                    fontWeight: '500',
                   }
                 ]}>이메일</Text>
                 <View style={[
                   styles.inputContainer, 
                   { 
                     backgroundColor: theme.colors.elevation2,
-                    borderRadius: theme.design.borderRadius.md,
+                    borderRadius: 8,
                     borderWidth: 1,
                     borderColor: theme.colors.divider,
                   }
@@ -167,8 +169,8 @@ const LoginScreen = () => {
                       styles.textInput, 
                       { 
                         color: theme.colors.text,
-                        fontSize: theme.typography.sizes.md,
-                        fontWeight: theme.typography.weights.regular,
+                        fontSize: 15,
+                        fontWeight: '400',
                       }
                     ]}
                     placeholder="이메일을 입력하세요"
@@ -187,15 +189,15 @@ const LoginScreen = () => {
                   styles.inputLabel, 
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.sm,
-                    fontWeight: theme.typography.weights.medium,
+                    fontSize: 13,
+                    fontWeight: '500',
                   }
                 ]}>비밀번호</Text>
                 <View style={[
                   styles.inputContainer, 
                   { 
                     backgroundColor: theme.colors.elevation2,
-                    borderRadius: theme.design.borderRadius.md,
+                    borderRadius: 8,
                     borderWidth: 1,
                     borderColor: theme.colors.divider,
                   }
@@ -212,8 +214,8 @@ const LoginScreen = () => {
                       styles.textInput, 
                       { 
                         color: theme.colors.text,
-                        fontSize: theme.typography.sizes.md,
-                        fontWeight: theme.typography.weights.regular,
+                        fontSize: 15,
+                        fontWeight: '400',
                       }
                     ]}
                     placeholder="비밀번호를 입력하세요"
@@ -241,7 +243,7 @@ const LoginScreen = () => {
                   styles.loginButton, 
                   { 
                     backgroundColor: theme.colors.primary,
-                    borderRadius: theme.design.borderRadius.lg,
+                    borderRadius: 12,
                   }
                 ]}
                 onPress={handleLogin}
@@ -251,8 +253,8 @@ const LoginScreen = () => {
                   styles.loginButtonText,
                   { 
                     color: '#ffffff',
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>
                   {isLoading ? '로그인 중...' : '로그인'}
@@ -265,7 +267,7 @@ const LoginScreen = () => {
                   styles.registerButton,
                   {
                     backgroundColor: '#fff',
-                    borderRadius: theme.design.borderRadius.lg,
+                    borderRadius: 12,
                   }
                 ]}
                 onPress={handleRegister}
@@ -274,8 +276,8 @@ const LoginScreen = () => {
                   styles.registerButtonText,
                   {
                     color: theme.colors.primary,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>계정 만들기</Text>
               </TouchableOpacity>
@@ -285,8 +287,7 @@ const LoginScreen = () => {
           {/* 다른 옵션들 */}
           <View style={styles.optionsContainer}>
             <GlassmorphismCard
-              isDark={mode === 'dark'}
-              opacity={0.18}
+              elevationLevel={1}
               style={styles.optionCard}
             >
               <TouchableOpacity 
@@ -305,16 +306,16 @@ const LoginScreen = () => {
                     styles.optionTitle,
                     { 
                       color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
+                      fontSize: 15,
+                      fontWeight: '600',
                     }
                   ]}>데모 모드</Text>
                   <Text style={[
                     styles.optionSubtitle,
                     { 
                       color: theme.colors.textSecondary,
-                      fontSize: theme.typography.sizes.sm,
-                      fontWeight: theme.typography.weights.regular,
+                      fontSize: 13,
+                      fontWeight: '400',
                     }
                   ]}>로그인 없이 체험해보세요</Text>
                 </View>

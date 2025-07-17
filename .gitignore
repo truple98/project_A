@@ -197,6 +197,9 @@ prisma/migrations/
 !.vscode/extensions.json
 *.code-workspace
 
+# Cursor
+.cursorrules
+
 # IntelliJ IDEA
 .idea/
 *.iws

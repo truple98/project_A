@@ -5,8 +5,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { RootStackParamList } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 
 // TypeScript Interfaces
 interface RegisterFormData {
@@ -69,7 +69,7 @@ const RegisterScreen = () => {
 
   // 5.5 JSX return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <KeyboardAvoidingView 
         style={styles.container} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -85,33 +85,33 @@ const RegisterScreen = () => {
                 styles.title,
                 { 
                   color: theme.colors.text,
-                  fontSize: theme.typography.sizes.xxl,
-                  fontWeight: theme.typography.weights.bold,
+                  fontSize: 24,
+                  fontWeight: '700',
                 }
               ]}>새로운 모험을{'\n'}시작해보세요!</Text>
               <Text style={[
                 styles.subtitle,
                 { 
                   color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.regular,
+                  fontSize: 15,
+                  fontWeight: '400',
                 }
               ]}>계정을 만들어 게임을 시작하세요</Text>
             </View>
 
             {/* 회원가입 폼 */}
-            <View style={[
-              styles.formCard,
-              { backgroundColor: theme.colors.elevation1 }
-            ]}>
+            <GlassmorphismCard
+              elevationLevel={2}
+              style={styles.formCard}
+            >
               {/* 사용자명 입력 */}
               <View style={styles.inputContainer}>
                 <Text style={[
                   styles.inputLabel,
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>사용자명</Text>
                 <TextInput
@@ -121,8 +121,8 @@ const RegisterScreen = () => {
                       backgroundColor: theme.colors.elevation2,
                       color: theme.colors.text,
                       borderColor: theme.colors.divider,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.regular,
+                      fontSize: 15,
+                      fontWeight: '400',
                     }
                   ]}
                   value={formData.username}
@@ -140,8 +140,8 @@ const RegisterScreen = () => {
                   styles.inputLabel,
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>이메일</Text>
                 <TextInput
@@ -151,8 +151,8 @@ const RegisterScreen = () => {
                       backgroundColor: theme.colors.elevation2,
                       color: theme.colors.text,
                       borderColor: theme.colors.divider,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.regular,
+                      fontSize: 15,
+                      fontWeight: '400',
                     }
                   ]}
                   value={formData.email}
@@ -171,8 +171,8 @@ const RegisterScreen = () => {
                   styles.inputLabel,
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>비밀번호</Text>
                 <TextInput
@@ -182,8 +182,8 @@ const RegisterScreen = () => {
                       backgroundColor: theme.colors.elevation2,
                       color: theme.colors.text,
                       borderColor: theme.colors.divider,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.regular,
+                      fontSize: 15,
+                      fontWeight: '400',
                     }
                   ]}
                   value={formData.password}
@@ -202,8 +202,8 @@ const RegisterScreen = () => {
                   styles.inputLabel,
                   { 
                     color: theme.colors.text,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
+                    fontSize: 15,
+                    fontWeight: '600',
                   }
                 ]}>비밀번호 확인</Text>
                 <TextInput
@@ -213,8 +213,8 @@ const RegisterScreen = () => {
                       backgroundColor: theme.colors.elevation2,
                       color: theme.colors.text,
                       borderColor: theme.colors.divider,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.regular,
+                      fontSize: 15,
+                      fontWeight: '400',
                     }
                   ]}
                   value={formData.confirmPassword}
@@ -233,8 +233,8 @@ const RegisterScreen = () => {
                   style={[
                     styles.registerButton,
                     { 
-                      backgroundColor: '#fff',
-                      borderRadius: theme.design.borderRadius.lg,
+                      backgroundColor: theme.colors.primary,
+                      borderRadius: 12,
                     },
                     (!formData.username || !formData.email || !formData.password || !formData.confirmPassword || isLoading) && styles.registerButtonDisabled
                   ]}
@@ -244,9 +244,9 @@ const RegisterScreen = () => {
                   <Text style={[
                     styles.registerButtonText,
                     { 
-                      color: theme.colors.primary,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
+                      color: '#ffffff',
+                      fontSize: 15,
+                      fontWeight: '600',
                     }
                   ]}>
                     {isLoading ? '계정 생성 중...' : '계정 생성하기'}
@@ -258,7 +258,7 @@ const RegisterScreen = () => {
                     styles.loginButton,
                     { 
                       backgroundColor: theme.colors.elevation2,
-                      borderRadius: theme.design.borderRadius.md,
+                      borderRadius: 8,
                     }
                   ]}
                   onPress={handleBackToLogin}
@@ -267,13 +267,13 @@ const RegisterScreen = () => {
                     styles.loginButtonText,
                     { 
                       color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.semibold,
+                      fontSize: 15,
+                      fontWeight: '600',
                     }
                   ]}>로그인으로 돌아가기</Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </GlassmorphismCard>
 
             {/* 푸터 */}
             <View style={styles.footer}>
@@ -281,8 +281,8 @@ const RegisterScreen = () => {
                 styles.footerText,
                 { 
                   color: theme.colors.textSecondary,
-                  fontSize: theme.typography.sizes.sm,
-                  fontWeight: theme.typography.weights.regular,
+                  fontSize: 13,
+                  fontWeight: '400',
                 }
               ]}>
                 계정을 생성하면 서비스 이용약관에 동의하게 됩니다

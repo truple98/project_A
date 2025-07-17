@@ -6,9 +6,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { RootStackParamList, ConsequenceType } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
-import { ScreenHeader } from '../../src/components/ScreenHeader';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
+import { ScreenHeader } from '../../components/ScreenHeader';
 
 // TypeScript Interfaces
 interface StoryChoice {
