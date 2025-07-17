@@ -38,18 +38,22 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 // 🎮 Game Flow Screens  
 import HomeScreen from '../screens/game/HomeScreen';
 import GameStartScreen from '../screens/game/GameStartScreen';
+import StoryScreen from '../screens/game/StoryScreen';
 import ResultScreen from '../screens/game/ResultScreen';
 import EndingScreen from '../screens/game/EndingScreen';
 
 // 👤 Character & Progress Screens
-import CharacterScreen from '../screens/player/CharacterScreen';
 import HistoryScreen from '../screens/player/HistoryScreen';
-import InventoryScreen from '../screens/player/InventoryScreen';
 import AccountScreen from '../screens/player/AccountScreen';
 
 // ⚙️ Utility & Settings Screens
 import SettingsScreen from '../screens/utility/SettingsScreen';
+import StoreScreen from '../screens/utility/StoreScreen';
 import HelpScreen from '../screens/utility/HelpScreen';
+import EncyclopediaScreen from '../screens/utility/EncyclopediaScreen';
+
+// 🏆 Achievement Screen
+import AchievementScreen from '../screens/player/AchievementScreen';
 
 // ========================================
 // 5. 프로젝트 내부 - 타입 및 스토어
@@ -137,6 +141,11 @@ const AppNavigator: React.FC = () => {
       component={GameStartScreen} 
     />,
     <Stack.Screen 
+      key="Story"
+      name="Story" 
+      component={StoryScreen} 
+    />,
+    <Stack.Screen 
       key={ROUTES.MAIN.RESULT}
       name={ROUTES.MAIN.RESULT} 
       component={ResultScreen} 
@@ -149,20 +158,16 @@ const AppNavigator: React.FC = () => {
     
     // 👤 캐릭터 및 진행상황 스크린들
     <Stack.Screen 
-      key={ROUTES.CHARACTER.OVERVIEW}
-      name={ROUTES.CHARACTER.OVERVIEW} 
-      component={CharacterScreen} 
+      key="Encyclopedia"
+      name="Encyclopedia" 
+      component={EncyclopediaScreen} 
     />,
     <Stack.Screen 
       key={ROUTES.CHARACTER.HISTORY}
       name={ROUTES.CHARACTER.HISTORY} 
       component={HistoryScreen} 
     />,
-    <Stack.Screen 
-      key={ROUTES.CHARACTER.INVENTORY}
-      name={ROUTES.CHARACTER.INVENTORY} 
-      component={InventoryScreen} 
-    />,
+
     
     // ⚙️ 설정 및 계정 스크린들
     <Stack.Screen 
@@ -174,6 +179,16 @@ const AppNavigator: React.FC = () => {
       key={ROUTES.SETTINGS.ACCOUNT}
       name={ROUTES.SETTINGS.ACCOUNT} 
       component={AccountScreen} 
+    />,
+    <Stack.Screen 
+      key={ROUTES.SETTINGS.ACHIEVEMENT}
+      name={ROUTES.SETTINGS.ACHIEVEMENT} 
+      component={AchievementScreen} 
+    />,
+    <Stack.Screen 
+      key={ROUTES.SETTINGS.STORE}
+      name={ROUTES.SETTINGS.STORE} 
+      component={StoreScreen} 
     />,
     <Stack.Screen 
       key={ROUTES.SETTINGS.HELP}

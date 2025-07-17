@@ -4,9 +4,9 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider, useTheme } from './theme/ThemeContext';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
-import { store } from './store';
+import { store } from './src/store';
 import AppNavigator from './src/navigation/AppNavigator';
 
 // Create a client for React Query

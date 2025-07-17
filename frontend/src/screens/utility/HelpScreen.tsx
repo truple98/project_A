@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 // 2. 내부 컴포넌트 및 유틸리티 임포트 (알파벳 순서)
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
-import { ScreenHeader } from '../../src/components/ScreenHeader';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
+import { ScreenHeader } from '../../components/ScreenHeader';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
@@ -110,7 +110,7 @@ const HelpScreen = () => {
 
   // 5.4. JSX 반환
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         <ScreenHeader title="도움말" onBackPress={handleBack} />
 

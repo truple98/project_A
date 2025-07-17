@@ -8,7 +8,8 @@ import { RootStackParamList, ConsequenceType } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
-import { ScreenHeader } from '../../components/ScreenHeader';
+import SideMenu from '../../components/common/SideMenu';
+import GameInfoModal from '../../components/common/GameInfoModal';
 
 // TypeScript Interfaces
 interface StoryChoice {
@@ -28,16 +29,58 @@ interface StoryData {
 }
 
 interface CharacterStats {
-  level: number;
+  daysPassed: number;
+  energy: number;
+  maxEnergy: number;
   health: number;
   maxHealth: number;
-  mana: number;
-  maxMana: number;
+  motivation: number;
+  maxMotivation: number;
+  stress: number;
+  maxStress: number;
 }
 
-interface ConsequenceResult {
-  type: ConsequenceType;
-  value: number;
+
+
+interface PlayerInfo {
+  name: string;
+  daysPassed: number;
+  energy: number;
+  maxEnergy: number;
+  health: number;
+  maxHealth: number;
+  motivation: number;
+  maxMotivation: number;
+  stress: number;
+  maxStress: number;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  type: 'main' | 'sub';
+  status: 'active' | 'completed' | 'failed';
+  progress: number;
+  maxProgress: number;
+}
+
+interface NPC {
+  id: string;
+  name: string;
+  relationship: number;
+  maxRelationship: number;
+  lastMet: string;
+  description: string;
+}
+
+interface DialogueRecord {
+  id: string;
+  timestamp: string;
+  npcName: string;
+  content: string;
+  playerChoice: string;
+  consequence: string;
 }
 
 type StoryScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Story'>;
@@ -46,22 +89,115 @@ type StoryScreenRouteProp = RouteProp<RootStackParamList, 'Story'>;
 // Constants
 const INITIAL_STORY_DATA: StoryData = {
   id: 'start',
-  title: '모험의 시작',
-  content: '당신은 어둠 속에서 깨어났습니다. 주변을 둘러보니 낯선 숲 속에 있습니다. 멀리서 이상한 빛이 보입니다.',
+  title: '마법학원의 첫날',
+  content: '아르카니아 마법학원의 대형 도서관에 서 있습니다. 고대 마법서들이 빽빽이 쌓인 책장들 사이로 은은한 마법의 빛이 새어나오고 있습니다. 마법사 길드의 장로인 엘드리치가 당신을 불러 새로운 임무를 맡기려고 합니다. 그의 눈빛에는 당신에 대한 기대와 함께 약간의 우려도 보입니다.\n\n도서관의 창가로 걸어가니 마을의 풍경이 한눈에 들어옵니다. 아침 햇살이 마을의 지붕들을 금빛으로 물들이고 있고, 멀리서는 마법사들이 연습하는 모습도 보입니다. 이곳에서 당신의 모험이 시작될 것입니다.',
   choices: [
-    { id: 'investigate', text: '빛을 조사한다', consequence: { type: ConsequenceType.HEALTH, value: -5 } },
-    { id: 'avoid', text: '다른 길을 찾는다', consequence: { type: ConsequenceType.MANA, value: -3 } },
-    { id: 'rest', text: '잠시 휴식을 취한다', consequence: { type: ConsequenceType.HEALTH, value: 10 } },
+    { id: 'confident', text: '자신감을 가지고 임무를 받아들인다', consequence: { type: ConsequenceType.MANA, value: -15 } },
+    { id: 'careful', text: '신중하게 임무의 내용을 파악한다', consequence: { type: ConsequenceType.MANA, value: -8 } },
+    { id: 'rest', text: '잠시 휴식을 취하고 마음을 정리한다', consequence: { type: ConsequenceType.MANA, value: 20 } },
   ],
 };
 
 const INITIAL_CHARACTER_STATS: CharacterStats = {
-  level: 1,
-  health: 85,
-  maxHealth: 100,
-  mana: 60,
-  maxMana: 80,
+  daysPassed: 45,
+  energy: 3,
+  maxEnergy: 4,
+  health: 4,
+  maxHealth: 4,
+  motivation: 7,
+  maxMotivation: 10,
+  stress: 3,
+  maxStress: 10,
 };
+
+const MOCK_PLAYER_INFO: PlayerInfo = {
+  name: '아리아 스톰윈드',
+  daysPassed: 45,
+  energy: 3,
+  maxEnergy: 4,
+  health: 4,
+  maxHealth: 4,
+  motivation: 7,
+  maxMotivation: 10,
+  stress: 3,
+  maxStress: 10,
+};
+
+const MOCK_TASKS: Task[] = [
+  {
+    id: 'main1',
+    title: '고대 마법서 해독',
+    description: '아르카니아 도서관에서 발견된 고대 마법서를 해독하여 잃어버린 마법을 복원해야 합니다.',
+    type: 'main',
+    status: 'active',
+    progress: 3,
+    maxProgress: 10,
+  },
+  {
+    id: 'sub1',
+    title: '마법 재료 수집',
+    description: '마법 실습에 필요한 희귀한 재료들을 수집합니다.',
+    type: 'sub',
+    status: 'active',
+    progress: 7,
+    maxProgress: 10,
+  },
+  {
+    id: 'sub2',
+    title: '동료 마법사들과의 협력',
+    description: '다른 학생들과 함께 마법 프로젝트를 완성합니다.',
+    type: 'sub',
+    status: 'completed',
+    progress: 10,
+    maxProgress: 10,
+  },
+];
+
+const MOCK_NPCS: NPC[] = [
+  {
+    id: 'npc1',
+    name: '엘드리치 장로',
+    relationship: 75,
+    maxRelationship: 100,
+    lastMet: '오늘',
+    description: '마법사 길드의 현명한 장로. 당신의 스승이자 멘토 역할을 합니다.',
+  },
+  {
+    id: 'npc2',
+    name: '리나 파이어스피어',
+    relationship: 60,
+    maxRelationship: 100,
+    lastMet: '어제',
+    description: '같은 학년의 엘리트 마법사. 경쟁 관계이지만 때로는 협력합니다.',
+  },
+  {
+    id: 'npc3',
+    name: '마스터 조르단',
+    relationship: 45,
+    maxRelationship: 100,
+    lastMet: '3일 전',
+    description: '마법 실습 담당 교수. 엄격하지만 학생들을 진심으로 아끼는 분입니다.',
+  },
+];
+
+const MOCK_DIALOGUE_HISTORY: DialogueRecord[] = [
+  {
+    id: 'dialogue1',
+    timestamp: '오늘 14:30',
+    npcName: '엘드리치 장로',
+    content: '아리아, 고대 마법서 해독 임무를 맡기겠다. 이는 쉬운 일이 아니지만, 너의 잠재력을 믿는다.',
+    playerChoice: '자신감을 가지고 임무를 받아들인다',
+    consequence: '에너지 -15, 동기부여 +10',
+  },
+  {
+    id: 'dialogue2',
+    timestamp: '어제 16:20',
+    npcName: '리나 파이어스피어',
+    content: '아리아, 마법 대결에서 너를 이길 수 있을까? 실력이 많이 늘었구나.',
+    playerChoice: '겸손하게 대답한다',
+    consequence: '스트레스 -5, 관계도 +5',
+  },
+];
 
 const CONSEQUENCE_LABELS = {
   [ConsequenceType.HEALTH]: '체력',
@@ -94,48 +230,120 @@ const getConsequenceColor = (value: number, mode: string): string => {
   return mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(26, 26, 26, 0.7)';
 };
 
+// Token Component
+const TokenDisplay: React.FC<{
+  current: number;
+  max: number;
+  icon: string;
+  color: string;
+  label: string;
+}> = ({ current, max, icon, color, label }) => {
+  const { theme } = useTheme();
+  
+  const tokenStyles = StyleSheet.create({
+    tokenContainer: {
+      alignItems: 'center',
+    },
+    tokenHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
+    tokenLabel: {
+      marginLeft: 4,
+      fontSize: 11,
+      fontWeight: '600',
+      letterSpacing: -0.1,
+    },
+    tokenGrid: {
+      flexDirection: 'row',
+      gap: 3,
+    },
+    token: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      borderWidth: 1,
+    },
+  });
+  
+  return (
+    <View style={tokenStyles.tokenContainer}>
+      <View style={tokenStyles.tokenHeader}>
+        <Icon name={icon} size={14} color={color} />
+        <Text style={[
+          tokenStyles.tokenLabel,
+          { color: theme.colors.textSecondary }
+        ]}>{label}</Text>
+      </View>
+      <View style={tokenStyles.tokenGrid}>
+        {Array.from({ length: max }, (_, index) => (
+          <View
+            key={index}
+            style={[
+              tokenStyles.token,
+              {
+                backgroundColor: index < current ? color : theme.colors.elevation2,
+                borderColor: color,
+              }
+            ]}
+          />
+        ))}
+      </View>
+    </View>
+  );
+};
+
 const StoryScreen = () => {
   const navigation = useNavigation<StoryScreenNavigationProp>();
   const route = useRoute<StoryScreenRouteProp>();
   const { theme, mode } = useTheme();
   
-  // 5.1 Hooks
+  // State
   const [currentStory, setCurrentStory] = useState<StoryData>(INITIAL_STORY_DATA);
   const [characterStats, setCharacterStats] = useState<CharacterStats>(INITIAL_CHARACTER_STATS);
-  const [consequences, setConsequences] = useState<ConsequenceResult[]>([]);
 
-  // 5.2 Data/mock data
-  const healthPercentage = useMemo(() => characterStats.health / characterStats.maxHealth, [characterStats.health, characterStats.maxHealth]);
-  const manaPercentage = useMemo(() => characterStats.mana / characterStats.maxMana, [characterStats.mana, characterStats.maxMana]);
+  const [isSideMenuVisible, setIsSideMenuVisible] = useState(false);
+  const [isGameInfoModalVisible, setIsGameInfoModalVisible] = useState(false);
 
-  // 5.3 Event handlers with useCallback
+  // Event handlers
   const handleChoice = useCallback(async (choiceId: string) => {
     const choice = currentStory.choices.find(c => c.id === choiceId);
     if (choice && choice.consequence) {
-      const newConsequences = [...consequences, choice.consequence];
-      setConsequences(newConsequences);
-
-      // 능력치 업데이트
+      // 능력치 업데이트 (에너지에 영향)
       const newStats = { ...characterStats };
-      switch (choice.consequence.type) {
-        case ConsequenceType.HEALTH:
-          newStats.health = Math.min(newStats.maxHealth, Math.max(0, newStats.health + choice.consequence.value));
-          break;
-        case ConsequenceType.MANA:
-          newStats.mana = Math.min(newStats.maxMana, Math.max(0, newStats.mana + choice.consequence.value));
-          break;
-      }
+      newStats.energy = Math.min(newStats.maxEnergy, Math.max(0, newStats.energy + choice.consequence.value));
       setCharacterStats(newStats);
     }
 
     // TODO: 다음 스토리 노드로 이동
-  }, [currentStory.choices, consequences, characterStats]);
+  }, [currentStory.choices, characterStats]);
 
   const handleBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  // 5.4 useEffect
+  const toggleSideMenu = useCallback(() => {
+    setIsSideMenuVisible(!isSideMenuVisible);
+  }, [isSideMenuVisible]);
+
+  const toggleGameInfoModal = useCallback(() => {
+    setIsGameInfoModalVisible(!isGameInfoModalVisible);
+  }, [isGameInfoModalVisible]);
+
+  const handleInventory = useCallback(() => {
+    // TODO: 인벤토리 모달 열기
+  }, []);
+
+  const handleSkills = useCallback(() => {
+    // TODO: 숙련도 모달 열기
+  }, []);
+
+  const handleCompanions = useCallback(() => {
+    // TODO: 동료 모달 열기
+  }, []);
+
+  // useEffect
   useEffect(() => {
     const nodeId = route.params?.nodeId;
     if (nodeId) {
@@ -143,311 +351,275 @@ const StoryScreen = () => {
     }
   }, [route.params]);
 
-  // 5.5 JSX return
+  // Styles
+  const styles = useMemo(() => getStyles(theme, mode), [theme, mode]);
+
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        <ScreenHeader title="스토리" onBackPress={handleBack} />
+        {/* Top Header */}
+        <View style={[
+          styles.topHeader,
+          { backgroundColor: theme.colors.surface }
+        ]}>
+          <TouchableOpacity onPress={toggleSideMenu} style={styles.headerButton}>
+            <Icon name="menu" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          
+          <Text style={[
+            styles.chapterTitle,
+            { 
+              color: theme.colors.text,
+              fontSize: theme.typography.sizes.lg,
+              fontWeight: theme.typography.weights.semibold,
+            }
+          ]}>1장 : 모험의 시작</Text>
+          
+          <TouchableOpacity onPress={toggleGameInfoModal} style={styles.headerButton}>
+            <Icon name="information" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+        </View>
 
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* 캐릭터 상태 */}
-          <View style={styles.section}>
-            <View style={[
-              styles.statsCard,
-              { backgroundColor: theme.colors.elevation1 }
-            ]}>
-              <View style={styles.statsHeader}>
-                <Text style={[
-                  styles.statsTitle,
-                  { 
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.lg,
-                    fontWeight: theme.typography.weights.semibold,
-                  }
-                ]}>캐릭터 상태</Text>
-                <Text style={[
-                  styles.level,
-                  { 
-                    color: theme.colors.primary,
-                    fontSize: theme.typography.sizes.md,
-                    fontWeight: theme.typography.weights.semibold,
-                  }
-                ]}>레벨 {characterStats.level}</Text>
-              </View>
-              
-              <View style={styles.statsGrid}>
-                <View style={styles.statRow}>
-                  <Text style={[
-                    styles.statLabel,
-                    { 
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.medium,
-                    }
-                  ]}>체력</Text>
-                  <View style={[
-                    styles.statBar,
-                    { backgroundColor: theme.colors.elevation2 }
-                  ]}>
-                    <View style={[
-                      styles.statFill,
-                      { 
-                        backgroundColor: mode === 'dark' ? '#EF5350' : '#F44336',
-                        width: `${healthPercentage * 100}%`
-                      }
-                    ]} />
-                  </View>
-                  <Text style={[
-                    styles.statValue,
-                    { 
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.sm,
-                      fontWeight: theme.typography.weights.semibold,
-                    }
-                  ]}>
-                    {characterStats.health}/{characterStats.maxHealth}
-                  </Text>
-                </View>
-                
-                <View style={styles.statRow}>
-                  <Text style={[
-                    styles.statLabel,
-                    { 
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.medium,
-                    }
-                  ]}>마나</Text>
-                  <View style={[
-                    styles.statBar,
-                    { backgroundColor: theme.colors.elevation2 }
-                  ]}>
-                    <View style={[
-                      styles.statFill,
-                      { 
-                        backgroundColor: theme.colors.primary,
-                        width: `${manaPercentage * 100}%`
-                      }
-                    ]} />
-                  </View>
-                  <Text style={[
-                    styles.statValue,
-                    { 
-                      color: theme.colors.text,
-                      fontSize: theme.typography.sizes.sm,
-                      fontWeight: theme.typography.weights.semibold,
-                    }
-                  ]}>
-                    {characterStats.mana}/{characterStats.maxMana}
-                  </Text>
-                </View>
-              </View>
+        {/* Stats Bar */}
+        <View style={[
+          styles.statsBar,
+          { backgroundColor: theme.colors.elevation1 }
+        ]}>
+          <View style={styles.statsRow}>
+            <View style={styles.locationContainer}>
+              <Icon name="map-marker" size={16} color={theme.colors.primary} />
+              <Text style={[
+                styles.locationText,
+                { color: theme.colors.text }
+              ]}>마을 여관 앞</Text>
+            </View>
+            
+            <TokenDisplay
+              current={characterStats.energy}
+              max={characterStats.maxEnergy}
+              icon="lightning-bolt"
+              color={mode === 'dark' ? '#FFA726' : '#FF9800'}
+              label="행동력"
+            />
+            
+            <TokenDisplay
+              current={characterStats.health}
+              max={characterStats.maxHealth}
+              icon="heart"
+              color={mode === 'dark' ? '#EF5350' : '#F44336'}
+              label="생명력"
+            />
+            
+            <View style={styles.daysContainer}>
+              <Text style={[
+                styles.daysLabel,
+                { color: theme.colors.textSecondary }
+              ]}>일차</Text>
+              <Text style={[
+                styles.daysValue,
+                { color: theme.colors.primary }
+              ]}>{characterStats.daysPassed}</Text>
             </View>
           </View>
+        </View>
 
-          {/* 스토리 내용 */}
-          <View style={styles.section}>
+        {/* Main Content */}
+        <View style={styles.mainContent}>
+          {/* Narration */}
+          <ScrollView 
+            style={styles.narrationContainer}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={[
-              styles.storyCard,
+              styles.narrationCard,
               { backgroundColor: theme.colors.elevation1 }
             ]}>
               <Text style={[
-                styles.storyTitle,
-                { 
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.xl,
-                  fontWeight: theme.typography.weights.bold,
-                }
-              ]}>{currentStory.title}</Text>
-              <Text style={[
-                styles.storyContent,
-                { 
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.regular,
-                }
-              ]}>{currentStory.content}</Text>
-              
-              <View style={styles.choicesContainer}>
-                <Text style={[
-                  styles.choicesTitle,
-                  { 
-                    color: theme.colors.text,
-                    fontSize: theme.typography.sizes.lg,
-                    fontWeight: theme.typography.weights.semibold,
-                  }
-                ]}>선택지</Text>
-                <View style={styles.choicesGrid}>
-                  {currentStory.choices.map((choice) => (
-                    <TouchableOpacity
-                      key={choice.id}
-                      style={[
-                        styles.choiceCard,
-                        { backgroundColor: theme.colors.surface }
-                      ]}
-                      onPress={() => handleChoice(choice.id)}
-                    >
-                      <Text style={[
-                        styles.choiceText,
-                        { 
-                          color: theme.colors.text,
-                          fontSize: theme.typography.sizes.md,
-                          fontWeight: theme.typography.weights.medium,
-                        }
-                      ]}>{choice.text}</Text>
-                      {choice.consequence && (
-                        <Text style={[
-                          styles.choiceConsequence,
-                          { 
-                            color: getConsequenceColor(choice.consequence.value, mode),
-                            backgroundColor: getConsequenceColor(choice.consequence.value, mode) + '20',
-                            fontSize: theme.typography.sizes.sm,
-                            fontWeight: theme.typography.weights.medium,
-                          }
-                        ]}>
-                          {getConsequenceText(choice.consequence.type, choice.consequence.value)}
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* 결과 기록 */}
-          <View style={styles.section}>
-            <View style={[
-              styles.consequencesCard,
-              { backgroundColor: theme.colors.surface }
-            ]}>
-              <Text style={[
-                styles.consequencesTitle,
+                styles.narrationText,
                 { 
                   color: theme.colors.text,
                   fontSize: theme.typography.sizes.lg,
-                  fontWeight: theme.typography.weights.semibold,
+                  fontWeight: theme.typography.weights.regular,
                 }
-              ]}>행동 결과</Text>
-              {consequences.length > 0 ? (
-                <View style={styles.consequencesList}>
-                  {consequences.map((consequence, index) => (
-                    <View key={index} style={[
-                      styles.consequenceItem,
-                      { backgroundColor: theme.colors.elevation1 }
-                    ]}>
-                      <View style={styles.consequenceIcon}>
-                        <Icon
-                          name={CONSEQUENCE_ICONS[consequence.type]}
-                          size={16}
-                          color={getConsequenceColor(consequence.value, mode)}
-                        />
-                      </View>
-                      <Text style={[
-                        styles.consequenceText,
-                        { 
-                          color: getConsequenceColor(consequence.value, mode),
-                          fontSize: theme.typography.sizes.sm,
-                          fontWeight: theme.typography.weights.medium,
-                        }
-                      ]}>
-                        {getConsequenceText(consequence.type, consequence.value)}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <View style={styles.emptyState}>
-                  <Text style={[
-                    styles.emptyStateText,
-                    { 
-                      color: theme.colors.textSecondary,
-                      fontSize: theme.typography.sizes.md,
-                      fontWeight: theme.typography.weights.regular,
-                    }
-                  ]}>아직 선택한 행동이 없습니다</Text>
-                </View>
-              )}
+              ]}>{currentStory.content}</Text>
             </View>
+          </ScrollView>
+
+
+        </View>
+
+        {/* Choices */}
+        <View style={styles.choicesSection}>
+          <Text style={[
+            styles.choicesTitle,
+            { 
+              color: theme.colors.text,
+              fontSize: theme.typography.sizes.lg,
+              fontWeight: theme.typography.weights.semibold,
+            }
+          ]}>선택지</Text>
+          <View style={styles.choicesGrid}>
+            {currentStory.choices.map((choice) => (
+              <TouchableOpacity
+                key={choice.id}
+                style={[
+                  styles.choiceCard,
+                  { backgroundColor: theme.colors.surface }
+                ]}
+                onPress={() => handleChoice(choice.id)}
+              >
+                <Text style={[
+                  styles.choiceText,
+                  { 
+                    color: theme.colors.text,
+                    fontSize: theme.typography.sizes.md,
+                    fontWeight: theme.typography.weights.medium,
+                  }
+                ]}>{choice.text}</Text>
+                {choice.consequence && (
+                  <Text style={[
+                    styles.choiceConsequence,
+                    { 
+                      color: getConsequenceColor(choice.consequence.value, mode),
+                      backgroundColor: getConsequenceColor(choice.consequence.value, mode) + '20',
+                      fontSize: theme.typography.sizes.sm,
+                      fontWeight: theme.typography.weights.medium,
+                    }
+                  ]}>
+                    {getConsequenceText(choice.consequence.type, choice.consequence.value)}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
-        </ScrollView>
+        </View>
+
+        {/* Footer */}
+        <View style={[
+          styles.footer,
+          { backgroundColor: theme.colors.surface }
+        ]}>
+          <TouchableOpacity style={styles.footerButton} onPress={handleInventory}>
+            <Icon name="package-variant" size={24} color={theme.colors.primary} />
+            <Text style={[
+              styles.footerButtonText,
+              { color: theme.colors.textSecondary }
+            ]}>소지품</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.footerButton} onPress={handleSkills}>
+            <Icon name="sword-cross" size={24} color={theme.colors.primary} />
+            <Text style={[
+              styles.footerButtonText,
+              { color: theme.colors.textSecondary }
+            ]}>숙련도</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.footerButton} onPress={handleCompanions}>
+            <Icon name="account-group" size={24} color={theme.colors.primary} />
+            <Text style={[
+              styles.footerButtonText,
+              { color: theme.colors.textSecondary }
+            ]}>동료</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Side Menu */}
+        <SideMenu 
+          isVisible={isSideMenuVisible} 
+          onClose={() => setIsSideMenuVisible(false)} 
+        />
+
+        {/* Game Info Modal */}
+        <GameInfoModal
+          isVisible={isGameInfoModalVisible}
+          onClose={() => setIsGameInfoModalVisible(false)}
+          playerInfo={MOCK_PLAYER_INFO}
+          tasks={MOCK_TASKS}
+          npcs={MOCK_NPCS}
+          dialogueHistory={MOCK_DIALOGUE_HISTORY}
+        />
       </View>
     </GlassmorphismBackground>
   );
 };
 
-// Styles moved outside component
-const styles = StyleSheet.create({
+// Styles function
+const getStyles = (theme: any, mode: string) => StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  statsCard: {
-    borderRadius: 16,
-    padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  statsHeader: {
+  topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
-  statsTitle: {
+  headerButton: {
+    padding: 8,
+  },
+  chapterTitle: {
     letterSpacing: -0.3,
   },
-  level: {
-    letterSpacing: -0.2,
+  statsBar: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
-  statsGrid: {
-    gap: 12,
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  statRow: {
+  locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  statLabel: {
-    minWidth: 60,
+  locationText: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: '600',
     letterSpacing: -0.2,
   },
-  statBar: {
-    flex: 1,
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginHorizontal: 12,
+  daysContainer: {
+    alignItems: 'center',
   },
-  statFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  statValue: {
-    minWidth: 60,
-    textAlign: 'right',
+  daysLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginBottom: 2,
     letterSpacing: -0.1,
   },
-  storyCard: {
+  daysValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: -0.2,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  narrationContainer: {
+    flex: 1,
+  },
+  narrationCard: {
     borderRadius: 16,
     padding: 24,
+    marginBottom: 16,
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 2 },
@@ -459,27 +631,25 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  storyTitle: {
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  storyContent: {
-    lineHeight: 24,
+  narrationText: {
+    lineHeight: 28,
     letterSpacing: -0.2,
   },
-  choicesContainer: {
-    marginTop: 24,
+
+  choicesSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   choicesTitle: {
-    marginBottom: 16,
+    marginBottom: 12,
     letterSpacing: -0.3,
   },
   choicesGrid: {
-    gap: 12,
+    gap: 8,
   },
   choiceCard: {
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 1 },
@@ -502,46 +672,34 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     letterSpacing: -0.1,
   },
-  consequencesCard: {
-    borderRadius: 16,
-    padding: 20,
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
     ...Platform.select({
       ios: {
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.1,
-        shadowRadius: 6,
+        shadowRadius: 4,
       },
       android: {
         elevation: 2,
       },
     }),
   },
-  consequencesTitle: {
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  consequencesList: {
-    gap: 8,
-  },
-  consequenceItem: {
-    flexDirection: 'row',
+  footerButton: {
     alignItems: 'center',
-    borderRadius: 8,
-    padding: 12,
+    padding: 8,
   },
-  consequenceIcon: {
-    marginRight: 8,
-  },
-  consequenceText: {
+  footerButtonText: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '600',
     letterSpacing: -0.1,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 32,
-  },
-  emptyStateText: {
-    letterSpacing: -0.2,
   },
 });
 

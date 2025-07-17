@@ -7,8 +7,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { RootStackParamList } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 
 // TypeScript Interfaces
 interface HistoryData {
@@ -70,6 +70,15 @@ const STATS_DATA: StatItem[] = [
   { icon: 'trophy', value: '23', label: '업적' },
 ];
 
+const DETAILED_STATS_DATA: StatItem[] = [
+  { icon: 'clock-outline', value: '156시간', label: '총 플레이 시간' },
+  { icon: 'trending-up', value: '78%', label: '승률' },
+  { icon: 'sword-cross', value: '1,234', label: '처치한 몬스터' },
+  { icon: 'package-variant', value: '567', label: '획득한 아이템' },
+  { icon: 'map-marker-path', value: '89', label: '탐험한 지역' },
+  { icon: 'account-group', value: '12', label: '만난 NPC' },
+];
+
 const STATUS_COLORS = {
   completed: '#4CAF50',
   failed: '#d9534f',
@@ -95,24 +104,40 @@ const HistoryScreen = () => {
     navigation.goBack();
   }, [navigation]);
 
+  const handleViewAllHistory = useCallback(() => {
+    // TODO: 전체 기록 보기 화면으로 이동
+    console.log('전체 기록 보기');
+  }, []);
+
   // 5.5 JSX return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         {/* Header */}
         <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.15}
           style={styles.header}
         >
-          <Text style={[
-            styles.headerTitle,
-            { 
-              color: theme.colors.text,
-              fontSize: theme.typography.sizes.xxl,
-              fontWeight: theme.typography.weights.bold,
-            }
-          ]}>기록</Text>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={[styles.backButton, { backgroundColor: theme.colors.surface }]}
+              onPress={handleGoBack}
+            >
+              <Icon
+                name="arrow-left"
+                size={20}
+                color={theme.colors.text}
+              />
+            </TouchableOpacity>
+            <Text style={[
+              styles.headerTitle,
+              { 
+                color: theme.colors.text,
+                fontSize: theme.typography.sizes.xxl,
+                fontWeight: theme.typography.weights.bold,
+              }
+            ]}>기록</Text>
+            <View style={styles.placeholder} />
+          </View>
         </GlassmorphismCard>
         
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -159,7 +184,7 @@ const HistoryScreen = () => {
             </View>
           </View>
 
-          {/* History Section */}
+          {/* Detailed Stats Section */}
           <View style={styles.section}>
             <Text style={[
               styles.sectionTitle,
@@ -168,7 +193,62 @@ const HistoryScreen = () => {
                 fontSize: theme.typography.sizes.lg,
                 fontWeight: theme.typography.weights.semibold,
               }
-            ]}>최근 게임 기록</Text>
+            ]}>상세 통계</Text>
+            <View style={styles.detailedStatsGrid}>
+              {DETAILED_STATS_DATA.map((stat, index) => (
+                <View key={index} style={[
+                  styles.detailedStatCard,
+                  { backgroundColor: theme.colors.elevation1 }
+                ]}>
+                  <View style={[
+                    styles.detailedStatIconContainer,
+                    { backgroundColor: theme.colors.elevation2 }
+                  ]}>
+                    <Icon name={stat.icon} size={20} color={theme.colors.text} />
+                  </View>
+                  <View style={styles.detailedStatContent}>
+                    <Text style={[
+                      styles.detailedStatValue,
+                      { 
+                        color: theme.colors.text,
+                        fontSize: theme.typography.sizes.md,
+                        fontWeight: theme.typography.weights.semibold,
+                      }
+                    ]}>{stat.value}</Text>
+                    <Text style={[
+                      styles.detailedStatLabel,
+                      { 
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.typography.sizes.xs,
+                        fontWeight: theme.typography.weights.medium,
+                      }
+                    ]}>{stat.label}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* History Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={[
+                styles.sectionTitle,
+                { 
+                  color: theme.colors.text,
+                  fontSize: theme.typography.sizes.lg,
+                  fontWeight: theme.typography.weights.semibold,
+                }
+              ]}>최근 게임 기록</Text>
+              <TouchableOpacity 
+                style={[styles.viewAllButton, { backgroundColor: theme.colors.primary }]}
+                onPress={handleViewAllHistory}
+              >
+                <Text style={[styles.viewAllButtonText, { color: '#FFFFFF' }]}>
+                  더보기
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.historyList}>
               {MOCK_HISTORY_DATA.map((item) => (
                 <View key={item.id} style={[
@@ -303,24 +383,7 @@ const HistoryScreen = () => {
             </View>
           </View>
 
-          <Button 
-            onPress={handleGoBack}
-            mode="contained"
-            style={[
-              styles.backButton,
-              { backgroundColor: theme.colors.elevation1 }
-            ]}
-            labelStyle={[
-              styles.backButtonLabel,
-              { 
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.md,
-                fontWeight: theme.typography.weights.semibold,
-              }
-            ]}
-          >
-            뒤로가기
-          </Button>
+
         </ScrollView>
       </View>
     </GlassmorphismBackground>
@@ -339,9 +402,17 @@ const styles = {
     marginHorizontal: 20,
     marginTop: 16,
   },
+  headerContent: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+  },
   headerTitle: {
     textAlign: 'center' as const,
     letterSpacing: -0.5,
+  },
+  placeholder: {
+    width: 48,
   },
   content: {
     flex: 1,
@@ -350,9 +421,24 @@ const styles = {
   section: {
     marginBottom: 32,
   },
-  sectionTitle: {
+  sectionHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
     marginBottom: 16,
+  },
+  sectionTitle: {
     letterSpacing: -0.3,
+  },
+  viewAllButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  viewAllButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    letterSpacing: -0.2,
   },
   statsGrid: {
     flexDirection: 'row' as const,
@@ -390,6 +476,47 @@ const styles = {
   },
   statLabel: {
     letterSpacing: -0.2,
+  },
+  detailedStatsGrid: {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    justifyContent: 'space-between' as const,
+    gap: 12,
+  },
+  detailedStatCard: {
+    width: '48%' as any,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    padding: 16,
+    borderRadius: 12,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  detailedStatIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    marginRight: 12,
+  },
+  detailedStatContent: {
+    flex: 1,
+  },
+  detailedStatValue: {
+    marginBottom: 2,
+    letterSpacing: -0.2,
+  },
+  detailedStatLabel: {
+    letterSpacing: -0.1,
   },
   historyList: {
     gap: 12,
@@ -460,6 +587,13 @@ const styles = {
     lineHeight: 18,
   },
   backButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  },
+  bottomBackButton: {
     borderRadius: 16,
     marginTop: 24,
     marginBottom: 32,

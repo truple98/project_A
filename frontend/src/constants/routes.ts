@@ -49,7 +49,6 @@ export const ROUTES = {
     OVERVIEW: 'Character',
     HISTORY: 'History',
     RECORD_DETAIL: 'RecordDetail',
-    INVENTORY: 'Inventory',
     STATUS: 'Status',
   },
   
@@ -57,6 +56,8 @@ export const ROUTES = {
   SETTINGS: {
     MAIN: 'Settings',
     ACCOUNT: 'Account',
+    ACHIEVEMENT: 'Achievement',
+    STORE: 'Store',
     VERSION_INFO: 'VersionInfo',
     HELP: 'Help',
   },

@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 // 2. Internal imports
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
@@ -27,11 +27,9 @@ const RecordDetailScreen = () => {
 
   // 4.3 Render
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.2}
           style={styles.card}
         >
           <Text style={[styles.title, { color: theme.colors.text }]}>기록 상세</Text>

@@ -1,14 +1,14 @@
 // 1. React/External imports
-import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
-import { Text, Button, TextInput } from 'react-native-paper';
+import React, { useCallback } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // 2. Internal imports
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
@@ -16,74 +16,38 @@ import { RootStackParamList } from '../../types';
 interface UserInfo {
   username: string;
   email: string;
-  level: number;
-  experience: number;
-  totalPlayTime: string;
-  gamesPlayed: number;
-  victoriesCount: number;
-  achievementsUnlocked: number;
-}
-
-interface StatItem {
-  label: string;
-  value: string;
-  icon: string;
-}
-
-interface ProfileSection {
-  title: string;
-  items: StatItem[];
+  accountLevel: number;
+  profileImage?: string;
 }
 
 type AccountScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Account'>;
 
 // 4. Constants
-const INITIAL_USER_INFO: UserInfo = {
+const MOCK_USER_INFO: UserInfo = {
   username: '모험가123',
   email: 'adventure@example.com',
-  level: 25,
-  experience: 15750,
-  totalPlayTime: '48시간 32분',
-  gamesPlayed: 127,
-  victoriesCount: 89,
-  achievementsUnlocked: 23,
+  accountLevel: 5,
 };
-
-const getProfileSections = (userInfo: UserInfo): ProfileSection[] => [
-  {
-    title: '게임 통계',
-    items: [
-      { label: '레벨', value: userInfo.level.toString(), icon: 'trending-up' },
-      { label: '경험치', value: userInfo.experience.toLocaleString(), icon: 'star' },
-      { label: '총 플레이 시간', value: userInfo.totalPlayTime, icon: 'clock' },
-      { label: '플레이한 게임', value: userInfo.gamesPlayed.toString(), icon: 'gamepad-variant' },
-    ]
-  },
-  {
-    title: '성과',
-    items: [
-      { label: '승리 횟수', value: userInfo.victoriesCount.toString(), icon: 'trophy' },
-      { label: '달성한 업적', value: userInfo.achievementsUnlocked.toString(), icon: 'medal' },
-      { label: '승률', value: `${Math.round((userInfo.victoriesCount / userInfo.gamesPlayed) * 100)}%`, icon: 'chart-line' },
-    ]
-  }
-];
 
 // 5. Component
 const AccountScreen = () => {
   // 5.1 Hooks
   const navigation = useNavigation<AccountScreenNavigationProp>();
-  const { theme, mode } = useTheme();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState<UserInfo>(INITIAL_USER_INFO);
+  const { theme } = useTheme();
 
-  // 5.2 Data/Computed values
-  const profileSections = getProfileSections(userInfo);
+  // 5.2 Event handlers
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-  // 5.3 Event handlers
-  const handleSave = useCallback(() => {
-    setIsEditing(false);
-    Alert.alert('저장 완료', '계정 정보가 성공적으로 저장되었습니다.');
+  const handleEditProfile = useCallback(() => {
+    // TODO: 프로필 편집 화면으로 이동
+    console.log('프로필 편집');
+  }, []);
+
+  const handleMyProducts = useCallback(() => {
+    // TODO: 내 상품 화면으로 이동
+    console.log('내 상품');
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -97,159 +61,318 @@ const AccountScreen = () => {
     );
   }, [navigation]);
 
-  const handleEditToggle = useCallback(() => {
-    setIsEditing(!isEditing);
-  }, [isEditing]);
-
-  const handleUsernameChange = useCallback((text: string) => {
-    setUserInfo(prev => ({ ...prev, username: text }));
+  const handleDeleteAccount = useCallback(() => {
+    Alert.alert(
+      '계정 탈퇴',
+      '정말로 계정을 탈퇴하시겠습니까?\n이 작업은 되돌릴 수 없습니다.',
+      [
+        { text: '취소', style: 'cancel' },
+        { text: '탈퇴', style: 'destructive', onPress: () => {
+          // TODO: 계정 탈퇴 절차 구현
+          console.log('계정 탈퇴');
+        }},
+      ]
+    );
   }, []);
 
-  const handleEmailChange = useCallback((text: string) => {
-    setUserInfo(prev => ({ ...prev, email: text }));
+  const handleTermsOfService = useCallback(() => {
+    // TODO: 이용 약관 화면으로 이동
+    console.log('이용 약관');
   }, []);
 
-  const handleEditCancel = useCallback(() => {
-    setIsEditing(false);
-  }, []);
+  // 5.3 Styles
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      paddingTop: 80,
+      paddingBottom: 32,
+      paddingHorizontal: 24,
+      marginHorizontal: 24,
+      marginTop: 24,
+    },
+    headerContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    backButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: '700',
+      letterSpacing: -0.5,
+    },
+    placeholder: {
+      width: 48,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 24,
+      paddingBottom: 32,
+    },
+    section: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 22,
+      fontWeight: '600',
+      marginBottom: 16,
+      letterSpacing: -0.3,
+    },
+    profileCard: {
+      padding: 24,
+      borderRadius: 16,
+      alignItems: 'center',
+    },
+    avatarContainer: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    username: {
+      fontSize: 24,
+      fontWeight: '700',
+      marginBottom: 8,
+      letterSpacing: -0.3,
+    },
+    email: {
+      fontSize: 16,
+      marginBottom: 20,
+      letterSpacing: -0.2,
+    },
+    editButton: {
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 20,
+    },
+    editButtonText: {
+      fontSize: 14,
+      fontWeight: '600',
+      letterSpacing: -0.1,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 20,
+      borderRadius: 16,
+      marginBottom: 12,
+    },
+    menuIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    menuContent: {
+      flex: 1,
+    },
+    menuTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 4,
+      letterSpacing: -0.2,
+    },
+    menuSubtitle: {
+      fontSize: 14,
+      letterSpacing: -0.1,
+    },
+    menuArrow: {
+      marginLeft: 8,
+    },
+    levelCard: {
+      padding: 20,
+      borderRadius: 16,
+      alignItems: 'center',
+    },
+    levelTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 8,
+      letterSpacing: -0.3,
+    },
+    levelValue: {
+      fontSize: 32,
+      fontWeight: '700',
+      marginBottom: 8,
+      letterSpacing: -0.5,
+    },
+    levelDescription: {
+      fontSize: 14,
+      textAlign: 'center',
+      letterSpacing: -0.1,
+    },
+    dangerButton: {
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+      borderRadius: 16,
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    dangerButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+    },
+  });
 
-  const handleGoBack = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
-
-  // 5.5 JSX Return
+  // 5.4 JSX Return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         {/* Header */}
-        <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.15}
-          style={styles.header}
-        >
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>계정 정보</Text>
+        <GlassmorphismCard style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={[styles.backButton, { backgroundColor: theme.colors.surface }]}
+              onPress={handleGoBack}
+            >
+              <Icon
+                name="arrow-left"
+                size={20}
+                color={theme.colors.text}
+              />
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+              계정 정보
+            </Text>
+            <View style={styles.placeholder} />
+          </View>
         </GlassmorphismCard>
         
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Profile Section */}
+          {/* 내 정보 */}
           <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>내 정보</Text>
             <View style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
-              <View style={[styles.avatarContainer, { backgroundColor: theme.colors.elevation1 }]}>
+              <View style={[styles.avatarContainer, { backgroundColor: theme.colors.elevated }]}>
                 <Icon
                   name="account"
-                  size={44}
+                  size={40}
                   color={theme.colors.text}
                 />
               </View>
-              <Text style={[styles.username, { color: theme.colors.text }]}>{userInfo.username}</Text>
-              <Text style={[styles.email, { color: theme.colors.textSecondary }]}>{userInfo.email}</Text>
+              <Text style={[styles.username, { color: theme.colors.text }]}>
+                {MOCK_USER_INFO.username}
+              </Text>
+              <Text style={[styles.email, { color: theme.colors.textSecondary }]}>
+                {MOCK_USER_INFO.email}
+              </Text>
               <TouchableOpacity 
-                style={[styles.editButton, { backgroundColor: theme.colors.elevation1 }]}
-                onPress={handleEditToggle}
+                style={[styles.editButton, { backgroundColor: theme.colors.elevated }]}
+                onPress={handleEditProfile}
               >
                 <Text style={[styles.editButtonText, { color: theme.colors.text }]}>
-                  {isEditing ? '편집 취소' : '프로필 편집'}
+                  프로필 편집
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          {isEditing ? (
-            /* Edit Form */
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>프로필 편집</Text>
-              <View style={[styles.editForm, { backgroundColor: theme.colors.surface }]}>
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text }]}>사용자명</Text>
-                  <TextInput
-                    value={userInfo.username}
-                    onChangeText={handleUsernameChange}
-                    style={[styles.textInput, { backgroundColor: theme.colors.elevation1 }]}
-                    mode="outlined"
-                    outlineColor="transparent"
-                    activeOutlineColor="transparent"
-                    textColor={theme.colors.text}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text }]}>이메일</Text>
-                  <TextInput
-                    value={userInfo.email}
-                    onChangeText={handleEmailChange}
-                    style={[styles.textInput, { backgroundColor: theme.colors.elevation1 }]}
-                    mode="outlined"
-                    outlineColor="transparent"
-                    activeOutlineColor="transparent"
-                    keyboardType="email-address"
-                    textColor={theme.colors.text}
-                  />
-                </View>
-                <View style={styles.formButtons}>
-                  <Button 
-                    onPress={handleEditCancel}
-                    mode="contained"
-                    style={[styles.formButton, { backgroundColor: theme.colors.elevation1 }]}
-                    labelStyle={[styles.formButtonLabel, { color: theme.colors.text }]}
-                  >
-                    취소
-                  </Button>
-                  <Button 
-                    onPress={handleSave}
-                    mode="contained"
-                    style={[styles.formButton, styles.primaryFormButton, { backgroundColor: theme.colors.primary }]}
-                    labelStyle={styles.primaryFormButtonLabel}
-                  >
-                    저장
-                  </Button>
-                </View>
-              </View>
+          {/* 계정 레벨 */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>계정 레벨</Text>
+            <View style={[styles.levelCard, { backgroundColor: theme.colors.surface }]}>
+              <Text style={[styles.levelTitle, { color: theme.colors.text }]}>
+                현재 레벨
+              </Text>
+              <Text style={[styles.levelValue, { color: theme.colors.primary }]}>
+                Lv.{MOCK_USER_INFO.accountLevel}
+              </Text>
+              <Text style={[styles.levelDescription, { color: theme.colors.textSecondary }]}>
+                게임을 플레이하며 레벨을 올려보세요!
+              </Text>
             </View>
-          ) : (
-            /* Info Sections */
-            profileSections.map((section, index) => (
-              <View key={index} style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{section.title}</Text>
-                <View style={[styles.infoSection, { backgroundColor: theme.colors.surface }]}>
-                  <View style={styles.infoList}>
-                    {section.items.map((item, itemIndex) => (
-                      <View key={itemIndex} style={[styles.infoItem, { backgroundColor: theme.colors.elevation1 }]}>
-                        <View style={[styles.infoIcon, { backgroundColor: theme.colors.elevation2 }]}>
-                          <Icon
-                            name={item.icon}
-                            size={24}
-                            color={theme.colors.text}
-                          />
-                        </View>
-                        <View style={styles.infoContent}>
-                          <Text style={[styles.infoLabel, { color: theme.colors.textSecondary }]}>{item.label}</Text>
-                          <Text style={[styles.infoValue, { color: theme.colors.text }]}>{item.value}</Text>
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              </View>
-            ))
-          )}
+          </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <Button 
+          {/* 내 상품 */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>내 상품</Text>
+            <TouchableOpacity 
+              style={[styles.menuItem, { backgroundColor: theme.colors.surface }]}
+              onPress={handleMyProducts}
+            >
+              <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="package-variant" size={24} color={theme.colors.text} />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={[styles.menuTitle, { color: theme.colors.text }]}>
+                  구매한 상품
+                </Text>
+                <Text style={[styles.menuSubtitle, { color: theme.colors.textSecondary }]}>
+                  앱 내에서 구매한 상품들을 확인하세요
+                </Text>
+              </View>
+              <Icon 
+                name="chevron-right" 
+                size={20} 
+                color={theme.colors.textSecondary}
+                style={styles.menuArrow}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* 이용 약관 */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>기타</Text>
+            <TouchableOpacity 
+              style={[styles.menuItem, { backgroundColor: theme.colors.surface }]}
+              onPress={handleTermsOfService}
+            >
+              <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="file-document-outline" size={24} color={theme.colors.text} />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={[styles.menuTitle, { color: theme.colors.text }]}>
+                  이용 약관
+                </Text>
+                <Text style={[styles.menuSubtitle, { color: theme.colors.textSecondary }]}>
+                  게임 이용에 대한 약관을 확인하세요
+                </Text>
+              </View>
+              <Icon 
+                name="chevron-right" 
+                size={20} 
+                color={theme.colors.textSecondary}
+                style={styles.menuArrow}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* 계정 관리 */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>계정 관리</Text>
+            
+            {/* 로그아웃 */}
+            <TouchableOpacity 
+              style={[styles.dangerButton, { backgroundColor: theme.colors.warning }]}
               onPress={handleLogout}
-              mode="contained"
-              style={[styles.actionButton, styles.logoutButton]}
-              labelStyle={[styles.actionButtonLabel, styles.logoutButtonLabel]}
             >
-              로그아웃
-            </Button>
-            <Button 
-              onPress={handleGoBack}
-              mode="contained"
-              style={[styles.actionButton, styles.backButton, { backgroundColor: theme.colors.elevation1 }]}
-              labelStyle={[styles.actionButtonLabel, styles.backButtonLabel, { color: theme.colors.text }]}
+              <Text style={[styles.dangerButtonText, { color: '#FFFFFF' }]}>
+                로그아웃
+              </Text>
+            </TouchableOpacity>
+
+            {/* 계정 탈퇴 */}
+            <TouchableOpacity 
+              style={[styles.dangerButton, { backgroundColor: theme.colors.error }]}
+              onPress={handleDeleteAccount}
             >
-              뒤로가기
-            </Button>
+              <Text style={[styles.dangerButtonText, { color: '#FFFFFF' }]}>
+                계정 탈퇴
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
@@ -257,234 +380,5 @@ const AccountScreen = () => {
   );
 };
 
-// 6. Styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
-    marginHorizontal: 20,
-    marginTop: 16,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    textAlign: 'center',
-    letterSpacing: -0.5,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  profileCard: {
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  avatarContainer: {
-    borderRadius: 44,
-    width: 88,
-    height: 88,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  username: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
-    letterSpacing: -0.5,
-  },
-  email: {
-    fontSize: 16,
-    marginBottom: 20,
-    letterSpacing: -0.2,
-  },
-  editButton: {
-    borderRadius: 12,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  editButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  infoSection: {
-    borderRadius: 16,
-    padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  infoList: {
-    gap: 12,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 16,
-  },
-  infoIcon: {
-    borderRadius: 24,
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  infoContent: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 14,
-    marginBottom: 4,
-    letterSpacing: -0.1,
-  },
-  infoValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    letterSpacing: -0.3,
-  },
-  editForm: {
-    borderRadius: 16,
-    padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    letterSpacing: -0.2,
-  },
-  textInput: {
-    borderRadius: 12,
-  },
-  formButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-    gap: 12,
-  },
-  formButton: {
-    flex: 1,
-    borderRadius: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  formButtonLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  primaryFormButton: {
-    // backgroundColor will be set dynamically
-  },
-  primaryFormButtonLabel: {
-    color: '#ffffff',
-  },
-  actionButtons: {
-    marginTop: 8,
-    marginBottom: 32,
-  },
-  actionButton: {
-    borderRadius: 16,
-    marginBottom: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  actionButtonLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  logoutButton: {
-    backgroundColor: '#d9534f',
-  },
-  logoutButtonLabel: {
-    color: '#ffffff',
-  },
-  backButton: {
-    // backgroundColor will be set dynamically
-  },
-  backButtonLabel: {
-    // color will be set dynamically
-  },
-});
-
-// 7. Export
+// 6. Export
 export default AccountScreen; 

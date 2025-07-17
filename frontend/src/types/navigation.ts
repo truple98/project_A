@@ -58,10 +58,9 @@ export type RootStackParamList = {
     finalScore?: number;
   };
   
-  // 캐릭터 관련 스크린
-  Character: {
-    characterId?: string;
-    mode?: 'view' | 'edit' | 'create';
+  // 도감 스크린
+  Encyclopedia: {
+    category?: 'places' | 'characters' | 'creatures' | 'companions' | 'tools' | 'status' | 'skills';
   };
   
   // 게임 기록 관련 스크린
@@ -75,11 +74,7 @@ export type RootStackParamList = {
     showComparison?: boolean;
   };
   
-  // 인벤토리 및 상태 스크린
-  Inventory: {
-    category?: 'all' | 'weapons' | 'armor' | 'consumables' | 'quest' | 'misc';
-    sortBy?: 'name' | 'type' | 'quantity';
-  };
+  // 상태 스크린
   
   Status: {
     tab?: 'stats' | 'traits' | 'achievements';
@@ -91,6 +86,8 @@ export type RootStackParamList = {
   };
   
   Account: undefined;
+  Achievement: undefined;
+  Store: undefined;
   VersionInfo: undefined;
   Help: {
     topic?: 'gameplay' | 'controls' | 'troubleshooting' | 'contact';
@@ -146,9 +143,9 @@ export interface ResultScreenProps extends BaseScreenProps<'Result'> {}
 export interface EndingScreenProps extends BaseScreenProps<'Ending'> {}
 
 /**
- * 캐릭터 스크린 Props
+ * 도감 스크린 Props
  */
-export interface CharacterScreenProps extends BaseScreenProps<'Character'> {}
+export interface EncyclopediaScreenProps extends BaseScreenProps<'Encyclopedia'> {}
 
 /**
  * 히스토리 스크린 Props
@@ -160,10 +157,7 @@ export interface HistoryScreenProps extends BaseScreenProps<'History'> {}
  */
 export interface RecordDetailScreenProps extends BaseScreenProps<'RecordDetail'> {}
 
-/**
- * 인벤토리 스크린 Props
- */
-export interface InventoryScreenProps extends BaseScreenProps<'Inventory'> {}
+
 
 /**
  * 상태 스크린 Props

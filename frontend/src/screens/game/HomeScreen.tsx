@@ -1,7 +1,6 @@
 // 1. React 및 외부 라이브러리 임포트 (알파벳 순서)
 import React, { useCallback } from 'react';
-import { Dimensions, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,7 +15,26 @@ import { RootStackParamList } from '../../types';
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 // 4. 상수 및 유틸리티 변수 정의
-const { width } = Dimensions.get('window');
+const MOCK_NOTICE = {
+  title: '새로운 업데이트가 있습니다!',
+  content: '새로운 스토리와 아이템이 추가되었습니다. 지금 바로 확인해보세요!',
+  date: '2024.01.15'
+};
+
+const MOCK_CURRENT_GAME = {
+  id: 'current-1',
+  title: '인생의 모험',
+  chapter: '제 3장: 새로운 시작',
+  daysPassed: 45, // 진행된 일수
+  completedMissions: 12, // 완수한 임무 수
+  activeMissions: 3, // 진행중인 임무 수
+  playerStatus: '건강함', // 플레이어 상태
+  currentMainMission: '새로운 직장 적응하기', // 현재 진행중인 메인 임무
+  lastPlayed: '2024-01-15 14:30',
+  duration: '2시간 15분',
+  location: '서울 강남구',
+  isActive: true,
+};
 
 // 5. 메인 스크린 컴포넌트 함수 정의
 const HomeScreen = () => {
@@ -24,47 +42,312 @@ const HomeScreen = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { theme, mode } = useTheme();
 
-  // 5.3. 이벤트 핸들러 및 유틸리티 함수 (useCallback으로 래핑)
+  // 5.2. 이벤트 핸들러 및 유틸리티 함수 (useCallback으로 래핑)
+  const handleContinueGame = useCallback(() => {
+    // 진행중인 게임으로 이동 - 현재 노드 ID를 전달
+    navigation.navigate('Story', {
+      nodeId: 'current-save-node',
+    });
+  }, [navigation]);
+
   const handleStartNewGame = useCallback(() => {
     navigation.navigate('GameStart');
-  }, [navigation]);
-
-  const handleViewCharacter = useCallback(() => {
-    navigation.navigate('Character');
-  }, [navigation]);
-
-  const handleViewHistory = useCallback(() => {
-    navigation.navigate('History');
   }, [navigation]);
 
   const handleOpenSettings = useCallback(() => {
     navigation.navigate('Settings');
   }, [navigation]);
 
-  // 5.5. JSX 반환
+  const handleOpenAchievement = useCallback(() => {
+    (navigation as any).navigate('Achievement');
+  }, [navigation]);
+
+  const handleOpenHistory = useCallback(() => {
+    navigation.navigate('History');
+  }, [navigation]);
+
+  const handleOpenStore = useCallback(() => {
+    (navigation as any).navigate('Store');
+  }, [navigation]);
+
+  const handleOpenMyPage = useCallback(() => {
+    navigation.navigate('Account');
+  }, [navigation]);
+
+  // 5.3. 스타일 정의 (theme 객체 활용)
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      paddingTop: 80,
+      paddingBottom: 32,
+      paddingHorizontal: 24,
+      marginHorizontal: 24,
+      marginTop: 24,
+    },
+    headerContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    username: {
+      fontSize: 28,
+      fontWeight: '700',
+      letterSpacing: -0.5,
+    },
+    settingsButton: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    mainContent: {
+      flex: 1,
+      paddingHorizontal: 24,
+      paddingTop: 32,
+      paddingBottom: 120, // 푸터 높이만큼 여백
+    },
+    noticeCard: {
+      marginBottom: 48,
+      padding: 24,
+    },
+    noticeTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 8,
+      letterSpacing: -0.3,
+    },
+    noticeContent: {
+      fontSize: 14,
+      lineHeight: 20,
+      marginBottom: 12,
+      letterSpacing: -0.1,
+    },
+    noticeDate: {
+      fontSize: 12,
+      letterSpacing: -0.1,
+    },
+    currentGameCard: {
+      marginBottom: 32,
+      padding: 24,
+    },
+    currentGameHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    currentGameTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      letterSpacing: -0.3,
+      flex: 1,
+    },
+    currentGameStatus: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 12,
+      backgroundColor: '#4CAF50',
+    },
+    currentGameStatusText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#FFFFFF',
+      letterSpacing: 0.5,
+    },
+    currentGameChapter: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 12,
+      letterSpacing: -0.2,
+    },
+    progressContainer: {
+      marginBottom: 16,
+    },
+    progressHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    progressText: {
+      fontSize: 14,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+    },
+    progressBar: {
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: 4,
+    },
+    gameStatsGrid: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 16,
+    },
+    gameStatItem: {
+      alignItems: 'center',
+      flex: 1,
+    },
+    gameStatValue: {
+      fontSize: 16,
+      fontWeight: '700',
+      marginBottom: 4,
+      letterSpacing: -0.2,
+    },
+    gameStatLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      letterSpacing: -0.1,
+    },
+    mainMissionContainer: {
+      marginBottom: 20,
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: 'rgba(76, 175, 80, 0.1)',
+      borderLeftWidth: 4,
+      borderLeftColor: '#4CAF50',
+    },
+    mainMissionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    mainMissionIcon: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 8,
+    },
+    mainMissionLabel: {
+      fontSize: 12,
+      fontWeight: '600',
+      letterSpacing: -0.1,
+    },
+    mainMissionText: {
+      fontSize: 16,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+      lineHeight: 22,
+    },
+    gameInfoContainer: {
+      marginBottom: 16,
+    },
+    gameInfoGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    gameInfoItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+      width: '48%',
+    },
+    gameInfoIcon: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    gameInfoContent: {
+      flex: 1,
+    },
+    gameInfoLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      letterSpacing: -0.1,
+      marginBottom: 2,
+    },
+    gameInfoValue: {
+      fontSize: 14,
+      fontWeight: '600',
+      letterSpacing: -0.1,
+    },
+    continueButton: {
+      paddingVertical: 16,
+      paddingHorizontal: 32,
+      borderRadius: 16,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    continueButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+    },
+    startGameButton: {
+      paddingVertical: 20,
+      paddingHorizontal: 40,
+      borderRadius: 20,
+      alignItems: 'center',
+      marginTop: 'auto', // 하단에 고정
+      marginBottom: 24,
+    },
+    startGameButtonText: {
+      fontSize: 18,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+    },
+    footer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(0, 0, 0, 0.1)',
+      paddingBottom: 32,
+      paddingTop: 20,
+    },
+    footerContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+    },
+    footerItem: {
+      alignItems: 'center',
+      flex: 1,
+    },
+    footerIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    footerText: {
+      fontSize: 12,
+      fontWeight: '500',
+      letterSpacing: -0.1,
+    },
+  });
+
+  // 5.4. JSX 반환
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         {/* 헤더 */}
-        <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.15}
-          style={styles.header}
-        >
+        <GlassmorphismCard style={styles.header}>
           <View style={styles.headerContent}>
-            <View>
-              <Text style={[styles.greeting, { color: theme.colors.textSecondary }]}>안녕하세요</Text>
-              <Text style={[styles.username, { color: theme.colors.text }]}>모험가님</Text>
-              <View style={styles.greetingIcon}>
-                <Icon
-                  name="lightning-bolt-outline"
-                  size={20}
-                  color={theme.colors.text}
-                />
-              </View>
-            </View>
+            <Text style={[styles.username, { color: theme.colors.text }]}>
+              모험가님
+            </Text>
             <TouchableOpacity 
-              style={[styles.profileButton, { backgroundColor: theme.colors.elevated }]}
+              style={[styles.settingsButton, { backgroundColor: theme.colors.surface }]}
               onPress={handleOpenSettings}
             >
               <Icon
@@ -76,329 +359,202 @@ const HomeScreen = () => {
           </View>
         </GlassmorphismCard>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* 오늘의 진행 상황 */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>오늘의 진행 상황</Text>
-            <View style={[styles.progressCard, { backgroundColor: theme.colors.surface }]}>
-              <View style={styles.progressSteps}>
-                <View style={[styles.progressStep, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.stepIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="check"
-                      size={16}
-                      color={theme.colors.success}
-                    />
-                  </View>
-                  <Text style={[styles.stepText, { color: theme.colors.text }]}>캐릭터 생성 완료</Text>
-                </View>
-                <View style={[styles.progressStep, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.stepIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="plus-circle-outline"
-                      size={16}
-                      color={theme.colors.textSecondary}
-                    />
-                  </View>
-                  <Text style={[styles.stepText, { color: theme.colors.text }]}>첫 번째 시나리오 시작하기</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+        {/* 메인 콘텐츠 */}
+        <View style={styles.mainContent}>
+          {/* 정보창 */}
+          <GlassmorphismCard style={styles.noticeCard}>
+            <Text style={[styles.noticeTitle, { color: theme.colors.text }]}>
+              {MOCK_NOTICE.title}
+            </Text>
+            <Text style={[styles.noticeContent, { color: theme.colors.textSecondary }]}>
+              {MOCK_NOTICE.content}
+            </Text>
+            <Text style={[styles.noticeDate, { color: theme.colors.textTertiary }]}>
+              {MOCK_NOTICE.date}
+            </Text>
+          </GlassmorphismCard>
 
-          {/* 통계 카드들 */}
-          <View style={styles.section}>
-            <View style={styles.statsGrid}>
-              <View style={[styles.statCard, { backgroundColor: theme.colors.card }]}>
-                <Text style={[styles.statValue, { color: theme.colors.text }]}>15</Text>
-                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>레벨</Text>
-                <Text style={[styles.statChange, { color: theme.colors.success }]}>+2</Text>
+          {/* 진행중인 게임 정보 */}
+          {MOCK_CURRENT_GAME.isActive && (
+            <GlassmorphismCard style={styles.currentGameCard}>
+              <View style={styles.currentGameHeader}>
+                <Text style={[styles.currentGameTitle, { color: theme.colors.text }]}>
+                  {MOCK_CURRENT_GAME.title}
+                </Text>
+                <View style={styles.currentGameStatus}>
+                  <Text style={styles.currentGameStatusText}>진행중</Text>
+                </View>
               </View>
               
-              <View style={[styles.statCard, { backgroundColor: theme.colors.card }]}>
-                <Text style={[styles.statValue, { color: theme.colors.text }]}>127</Text>
-                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>퀘스트</Text>
-                <Text style={[styles.statChange, { color: theme.colors.success }]}>+7</Text>
+              <Text style={[styles.currentGameChapter, { color: theme.colors.primary }]}>
+                {MOCK_CURRENT_GAME.chapter}
+              </Text>
+              
+              {/* 게임 통계 */}
+              <View style={styles.gameStatsGrid}>
+                <View style={styles.gameStatItem}>
+                  <Text style={[styles.gameStatValue, { color: theme.colors.text }]}>
+                    {MOCK_CURRENT_GAME.daysPassed}일
+                  </Text>
+                  <Text style={[styles.gameStatLabel, { color: theme.colors.textSecondary }]}>
+                    진행된 일수
+                  </Text>
+                </View>
+                <View style={styles.gameStatItem}>
+                  <Text style={[styles.gameStatValue, { color: theme.colors.text }]}>
+                    {MOCK_CURRENT_GAME.completedMissions}
+                  </Text>
+                  <Text style={[styles.gameStatLabel, { color: theme.colors.textSecondary }]}>
+                    완수한 임무
+                  </Text>
+                </View>
+                <View style={styles.gameStatItem}>
+                  <Text style={[styles.gameStatValue, { color: theme.colors.text }]}>
+                    {MOCK_CURRENT_GAME.activeMissions}
+                  </Text>
+                  <Text style={[styles.gameStatLabel, { color: theme.colors.textSecondary }]}>
+                    진행중인 임무
+                  </Text>
+                </View>
+                <View style={styles.gameStatItem}>
+                  <Text style={[styles.gameStatValue, { color: theme.colors.text }]}>
+                    {MOCK_CURRENT_GAME.playerStatus}
+                  </Text>
+                  <Text style={[styles.gameStatLabel, { color: theme.colors.textSecondary }]}>
+                    상태
+                  </Text>
+                </View>
               </View>
               
-              <View style={[styles.statCard, { backgroundColor: theme.colors.card }]}>
-                <Text style={[styles.statValue, { color: theme.colors.text }]}>89</Text>
-                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>승리</Text>
-                <Text style={[styles.statChange, { color: theme.colors.success }]}>+12</Text>
+              {/* 현재 진행중인 메인 임무 */}
+              <View style={styles.mainMissionContainer}>
+                <View style={styles.mainMissionHeader}>
+                  <View style={[styles.mainMissionIcon, { backgroundColor: theme.colors.primary }]}>
+                    <Icon name="target" size={16} color="#FFFFFF" />
+                  </View>
+                  <Text style={[styles.mainMissionLabel, { color: theme.colors.textSecondary }]}>
+                    현재 진행중인 메인 임무
+                  </Text>
+                </View>
+                <Text style={[styles.mainMissionText, { color: theme.colors.text }]}>
+                  {MOCK_CURRENT_GAME.currentMainMission}
+                </Text>
               </View>
-            </View>
-          </View>
-
-          {/* 빠른 메뉴 */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>빠른 메뉴</Text>
-            <View style={styles.menuGrid}>
-              <TouchableOpacity onPress={handleStartNewGame}>
-                <View style={[styles.menuItem, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="play-outline"
-                      size={24}
-                      color={theme.colors.text}
-                    />
+              
+              {/* 게임 정보 */}
+              <View style={styles.gameInfoContainer}>
+                <View style={styles.gameInfoGrid}>
+                  <View style={styles.gameInfoItem}>
+                    <View style={[styles.gameInfoIcon, { backgroundColor: theme.colors.elevated }]}>
+                      <Icon name="map-marker" size={16} color={theme.colors.text} />
+                    </View>
+                    <View style={styles.gameInfoContent}>
+                      <Text style={[styles.gameInfoLabel, { color: theme.colors.textSecondary }]}>
+                        현재 위치
+                      </Text>
+                      <Text style={[styles.gameInfoValue, { color: theme.colors.text }]}>
+                        {MOCK_CURRENT_GAME.location}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={[styles.menuTitle, { color: theme.colors.text }]}>새 게임</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleViewCharacter}>
-                <View style={[styles.menuItem, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="account-outline"
-                      size={24}
-                      color={theme.colors.text}
-                    />
+                  
+                  <View style={styles.gameInfoItem}>
+                    <View style={[styles.gameInfoIcon, { backgroundColor: theme.colors.elevated }]}>
+                      <Icon name="clock-outline" size={16} color={theme.colors.text} />
+                    </View>
+                    <View style={styles.gameInfoContent}>
+                      <Text style={[styles.gameInfoLabel, { color: theme.colors.textSecondary }]}>
+                        마지막 플레이
+                      </Text>
+                      <Text style={[styles.gameInfoValue, { color: theme.colors.text }]}>
+                        {MOCK_CURRENT_GAME.lastPlayed}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={[styles.menuTitle, { color: theme.colors.text }]}>캐릭터</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleViewHistory}>
-                <View style={[styles.menuItem, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="history"
-                      size={24}
-                      color={theme.colors.text}
-                    />
+                  
+                  <View style={styles.gameInfoItem}>
+                    <View style={[styles.gameInfoIcon, { backgroundColor: theme.colors.elevated }]}>
+                      <Icon name="timer-outline" size={16} color={theme.colors.text} />
+                    </View>
+                    <View style={styles.gameInfoContent}>
+                      <Text style={[styles.gameInfoLabel, { color: theme.colors.textSecondary }]}>
+                        총 플레이 시간
+                      </Text>
+                      <Text style={[styles.gameInfoValue, { color: theme.colors.text }]}>
+                        {MOCK_CURRENT_GAME.duration}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={[styles.menuTitle, { color: theme.colors.text }]}>기록</Text>
                 </View>
+              </View>
+              
+              {/* 게임 계속하기 버튼 */}
+              <TouchableOpacity
+                style={[
+                  styles.continueButton,
+                  { backgroundColor: theme.colors.primary }
+                ]}
+                onPress={handleContinueGame}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.continueButtonText, { color: '#FFFFFF' }]}>
+                  게임 계속하기
+                </Text>
               </TouchableOpacity>
+            </GlassmorphismCard>
+          )}
 
-              <TouchableOpacity onPress={handleOpenSettings}>
-                <View style={[styles.menuItem, { backgroundColor: theme.colors.card }]}>
-                  <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
-                    <Icon
-                      name="cog-outline"
-                      size={24}
-                      color={theme.colors.text}
-                    />
-                  </View>
-                  <Text style={[styles.menuTitle, { color: theme.colors.text }]}>설정</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* 게임 시작 버튼 */}
-          <Button 
+          {/* 새로운 모험 시작하기 버튼 */}
+          <TouchableOpacity
+            style={[
+              styles.startGameButton,
+              { backgroundColor: theme.colors.primary }
+            ]}
             onPress={handleStartNewGame}
-            mode="contained"
-            style={[styles.startGameButton, { backgroundColor: theme.colors.primary }]}
-            labelStyle={[styles.startGameButtonLabel, { color: '#ffffff' }]}
+            activeOpacity={0.8}
           >
-            새로운 모험 시작하기
-          </Button>
-        </ScrollView>
+            <Text style={[styles.startGameButtonText, { color: '#FFFFFF' }]}>
+              새로운 모험 시작하기
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 푸터 네비게이션 */}
+        <View style={[styles.footer, { backgroundColor: theme.colors.surface }]}>
+          <View style={styles.footerContent}>
+            <TouchableOpacity style={styles.footerItem} onPress={handleOpenAchievement}>
+              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="trophy" size={24} color={theme.colors.text} />
+              </View>
+              <Text style={[styles.footerText, { color: theme.colors.text }]}>업적</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.footerItem} onPress={handleOpenHistory}>
+              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="history" size={24} color={theme.colors.text} />
+              </View>
+              <Text style={[styles.footerText, { color: theme.colors.text }]}>기록</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.footerItem} onPress={handleOpenStore}>
+              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="store" size={24} color={theme.colors.text} />
+              </View>
+              <Text style={[styles.footerText, { color: theme.colors.text }]}>스토어</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.footerItem} onPress={handleOpenMyPage}>
+              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="account-outline" size={24} color={theme.colors.text} />
+              </View>
+              <Text style={[styles.footerText, { color: theme.colors.text }]}>마이페이지</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </GlassmorphismBackground>
   );
 };
 
-// 6. 스타일 정의 (컴포넌트 함수 외부에 StyleSheet.create로 선언)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
-    marginHorizontal: 20,
-    marginTop: 16,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  greeting: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 4,
-    letterSpacing: -0.2,
-  },
-  username: {
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-  },
-  greetingIcon: {
-    marginTop: 8,
-  },
-  profileButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  progressCard: {
-    borderRadius: 16,
-    padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  progressSteps: {
-    gap: 12,
-  },
-  progressStep: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 16,
-  },
-  stepIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  stepText: {
-    fontSize: 16,
-    fontWeight: '500',
-    letterSpacing: -0.2,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 8,
-  },
-  statCard: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: 2,
-    letterSpacing: -0.1,
-  },
-  statChange: {
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: -0.1,
-  },
-  menuGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  menuItem: {
-    width: (width - 64) / 2,
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  menuIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  menuTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  startGameButton: {
-    borderRadius: 16,
-    marginTop: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  startGameButtonLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-});
-
-// 7. 컴포넌트 내보내기
+// 6. 컴포넌트 내보내기
 export default HomeScreen; 

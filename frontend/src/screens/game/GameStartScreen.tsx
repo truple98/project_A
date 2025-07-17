@@ -7,8 +7,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // 2. Internal imports
-import GlassmorphismBackground from '../../src/components/GlassmorphismBackground';
-import GlassmorphismCard from '../../src/components/GlassmorphismCard';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import GlassmorphismCard from '../../components/GlassmorphismCard';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
@@ -125,12 +125,10 @@ const GameStartScreen = () => {
 
   // 5.5 JSX Return
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         {/* 헤더 */}
         <GlassmorphismCard
-          isDark={mode === 'dark'}
-          opacity={0.15}
           style={styles.header}
         >
           <View style={styles.headerContent}>
