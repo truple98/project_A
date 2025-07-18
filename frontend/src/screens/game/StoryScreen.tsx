@@ -1,298 +1,42 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, Platform, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, Platform, StyleSheet, Animated } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { RootStackParamList, ConsequenceType } from '../../types';
+import { RootStackParamList } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
-import GlassmorphismCard from '../../components/GlassmorphismCard';
 import SideMenu from '../../components/common/SideMenu';
 import GameInfoModal from '../../components/common/GameInfoModal';
+import TokenDisplay from '../../components/game/TokenDisplay';
+import InventoryTab from '../../components/game/InventoryTab';
+import ProficiencyTab from '../../components/game/ProficiencyTab';
+import CompanionsTab from '../../components/game/CompanionsTab';
+import StatusTab from '../../components/game/StatusTab';
+import { 
+  StoryData, 
+  FooterTabType,
+  StoryCharacterStats
+} from '../../types/story';
+import { ConsequenceType } from '../../types/game';
+import { 
+  INITIAL_STORY_DATA, 
+  INITIAL_CHARACTER_STATS,
+  MOCK_PLAYER_INFO,
+  MOCK_TASKS,
+  MOCK_NPCS,
+  MOCK_DIALOGUE_HISTORY,
+  MOCK_INVENTORY,
+  MOCK_SKILLS,
+  MOCK_COMPANIONS,
+  MOCK_STATUS_EFFECTS
+} from '../../constants/gameData';
+import { getConsequenceText, getConsequenceColor } from '../../utils/gameUtils';
 
-// TypeScript Interfaces
-interface StoryChoice {
-  id: string;
-  text: string;
-  consequence?: {
-    type: ConsequenceType;
-    value: number;
-  };
-}
-
-interface StoryData {
-  id: string;
-  title: string;
-  content: string;
-  choices: StoryChoice[];
-}
-
-interface CharacterStats {
-  daysPassed: number;
-  energy: number;
-  maxEnergy: number;
-  health: number;
-  maxHealth: number;
-  motivation: number;
-  maxMotivation: number;
-  stress: number;
-  maxStress: number;
-}
-
-
-
-interface PlayerInfo {
-  name: string;
-  daysPassed: number;
-  energy: number;
-  maxEnergy: number;
-  health: number;
-  maxHealth: number;
-  motivation: number;
-  maxMotivation: number;
-  stress: number;
-  maxStress: number;
-}
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  type: 'main' | 'sub';
-  status: 'active' | 'completed' | 'failed';
-  progress: number;
-  maxProgress: number;
-}
-
-interface NPC {
-  id: string;
-  name: string;
-  relationship: number;
-  maxRelationship: number;
-  lastMet: string;
-  description: string;
-}
-
-interface DialogueRecord {
-  id: string;
-  timestamp: string;
-  npcName: string;
-  content: string;
-  playerChoice: string;
-  consequence: string;
-}
-
+// Navigation Types
 type StoryScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Story'>;
 type StoryScreenRouteProp = RouteProp<RootStackParamList, 'Story'>;
-
-// Constants
-const INITIAL_STORY_DATA: StoryData = {
-  id: 'start',
-  title: '마법학원의 첫날',
-  content: '아르카니아 마법학원의 대형 도서관에 서 있습니다. 고대 마법서들이 빽빽이 쌓인 책장들 사이로 은은한 마법의 빛이 새어나오고 있습니다. 마법사 길드의 장로인 엘드리치가 당신을 불러 새로운 임무를 맡기려고 합니다. 그의 눈빛에는 당신에 대한 기대와 함께 약간의 우려도 보입니다.\n\n도서관의 창가로 걸어가니 마을의 풍경이 한눈에 들어옵니다. 아침 햇살이 마을의 지붕들을 금빛으로 물들이고 있고, 멀리서는 마법사들이 연습하는 모습도 보입니다. 이곳에서 당신의 모험이 시작될 것입니다.',
-  choices: [
-    { id: 'confident', text: '자신감을 가지고 임무를 받아들인다', consequence: { type: ConsequenceType.MANA, value: -15 } },
-    { id: 'careful', text: '신중하게 임무의 내용을 파악한다', consequence: { type: ConsequenceType.MANA, value: -8 } },
-    { id: 'rest', text: '잠시 휴식을 취하고 마음을 정리한다', consequence: { type: ConsequenceType.MANA, value: 20 } },
-  ],
-};
-
-const INITIAL_CHARACTER_STATS: CharacterStats = {
-  daysPassed: 45,
-  energy: 3,
-  maxEnergy: 4,
-  health: 4,
-  maxHealth: 4,
-  motivation: 7,
-  maxMotivation: 10,
-  stress: 3,
-  maxStress: 10,
-};
-
-const MOCK_PLAYER_INFO: PlayerInfo = {
-  name: '아리아 스톰윈드',
-  daysPassed: 45,
-  energy: 3,
-  maxEnergy: 4,
-  health: 4,
-  maxHealth: 4,
-  motivation: 7,
-  maxMotivation: 10,
-  stress: 3,
-  maxStress: 10,
-};
-
-const MOCK_TASKS: Task[] = [
-  {
-    id: 'main1',
-    title: '고대 마법서 해독',
-    description: '아르카니아 도서관에서 발견된 고대 마법서를 해독하여 잃어버린 마법을 복원해야 합니다.',
-    type: 'main',
-    status: 'active',
-    progress: 3,
-    maxProgress: 10,
-  },
-  {
-    id: 'sub1',
-    title: '마법 재료 수집',
-    description: '마법 실습에 필요한 희귀한 재료들을 수집합니다.',
-    type: 'sub',
-    status: 'active',
-    progress: 7,
-    maxProgress: 10,
-  },
-  {
-    id: 'sub2',
-    title: '동료 마법사들과의 협력',
-    description: '다른 학생들과 함께 마법 프로젝트를 완성합니다.',
-    type: 'sub',
-    status: 'completed',
-    progress: 10,
-    maxProgress: 10,
-  },
-];
-
-const MOCK_NPCS: NPC[] = [
-  {
-    id: 'npc1',
-    name: '엘드리치 장로',
-    relationship: 75,
-    maxRelationship: 100,
-    lastMet: '오늘',
-    description: '마법사 길드의 현명한 장로. 당신의 스승이자 멘토 역할을 합니다.',
-  },
-  {
-    id: 'npc2',
-    name: '리나 파이어스피어',
-    relationship: 60,
-    maxRelationship: 100,
-    lastMet: '어제',
-    description: '같은 학년의 엘리트 마법사. 경쟁 관계이지만 때로는 협력합니다.',
-  },
-  {
-    id: 'npc3',
-    name: '마스터 조르단',
-    relationship: 45,
-    maxRelationship: 100,
-    lastMet: '3일 전',
-    description: '마법 실습 담당 교수. 엄격하지만 학생들을 진심으로 아끼는 분입니다.',
-  },
-];
-
-const MOCK_DIALOGUE_HISTORY: DialogueRecord[] = [
-  {
-    id: 'dialogue1',
-    timestamp: '오늘 14:30',
-    npcName: '엘드리치 장로',
-    content: '아리아, 고대 마법서 해독 임무를 맡기겠다. 이는 쉬운 일이 아니지만, 너의 잠재력을 믿는다.',
-    playerChoice: '자신감을 가지고 임무를 받아들인다',
-    consequence: '에너지 -15, 동기부여 +10',
-  },
-  {
-    id: 'dialogue2',
-    timestamp: '어제 16:20',
-    npcName: '리나 파이어스피어',
-    content: '아리아, 마법 대결에서 너를 이길 수 있을까? 실력이 많이 늘었구나.',
-    playerChoice: '겸손하게 대답한다',
-    consequence: '스트레스 -5, 관계도 +5',
-  },
-];
-
-const CONSEQUENCE_LABELS = {
-  [ConsequenceType.HEALTH]: '체력',
-  [ConsequenceType.MANA]: '마나',
-  [ConsequenceType.EXPERIENCE]: '경험치',
-  [ConsequenceType.TRAIT]: '특성',
-  [ConsequenceType.ITEM]: '아이템',
-} as const;
-
-const CONSEQUENCE_ICONS = {
-  [ConsequenceType.HEALTH]: 'heart',
-  [ConsequenceType.MANA]: 'flash',
-  [ConsequenceType.EXPERIENCE]: 'star',
-  [ConsequenceType.TRAIT]: 'account',
-  [ConsequenceType.ITEM]: 'package-variant',
-} as const;
-
-// Utility functions
-const getConsequenceText = (type: ConsequenceType, value: number): string => {
-  const sign = value > 0 ? '+' : '';
-  return `${CONSEQUENCE_LABELS[type]} ${sign}${value}`;
-};
-
-const getConsequenceColor = (value: number, mode: string): string => {
-  if (value > 0) {
-    return mode === 'dark' ? '#66BB6A' : '#4CAF50';
-  } else if (value < 0) {
-    return mode === 'dark' ? '#EF5350' : '#F44336';
-  }
-  return mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(26, 26, 26, 0.7)';
-};
-
-// Token Component
-const TokenDisplay: React.FC<{
-  current: number;
-  max: number;
-  icon: string;
-  color: string;
-  label: string;
-}> = ({ current, max, icon, color, label }) => {
-  const { theme } = useTheme();
-  
-  const tokenStyles = StyleSheet.create({
-    tokenContainer: {
-      alignItems: 'center',
-    },
-    tokenHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 6,
-    },
-    tokenLabel: {
-      marginLeft: 4,
-      fontSize: 11,
-      fontWeight: '600',
-      letterSpacing: -0.1,
-    },
-    tokenGrid: {
-      flexDirection: 'row',
-      gap: 3,
-    },
-    token: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-      borderWidth: 1,
-    },
-  });
-  
-  return (
-    <View style={tokenStyles.tokenContainer}>
-      <View style={tokenStyles.tokenHeader}>
-        <Icon name={icon} size={14} color={color} />
-        <Text style={[
-          tokenStyles.tokenLabel,
-          { color: theme.colors.textSecondary }
-        ]}>{label}</Text>
-      </View>
-      <View style={tokenStyles.tokenGrid}>
-        {Array.from({ length: max }, (_, index) => (
-          <View
-            key={index}
-            style={[
-              tokenStyles.token,
-              {
-                backgroundColor: index < current ? color : theme.colors.elevation2,
-                borderColor: color,
-              }
-            ]}
-          />
-        ))}
-      </View>
-    </View>
-  );
-};
 
 const StoryScreen = () => {
   const navigation = useNavigation<StoryScreenNavigationProp>();
@@ -301,10 +45,14 @@ const StoryScreen = () => {
   
   // State
   const [currentStory, setCurrentStory] = useState<StoryData>(INITIAL_STORY_DATA);
-  const [characterStats, setCharacterStats] = useState<CharacterStats>(INITIAL_CHARACTER_STATS);
-
+  const [characterStats, setCharacterStats] = useState<StoryCharacterStats>(INITIAL_CHARACTER_STATS);
   const [isSideMenuVisible, setIsSideMenuVisible] = useState(false);
   const [isGameInfoModalVisible, setIsGameInfoModalVisible] = useState(false);
+  
+  // Footer expansion state
+  const [expandedFooter, setExpandedFooter] = useState<FooterTabType | null>(null);
+  const [activeTab, setActiveTab] = useState<FooterTabType>('inventory');
+  const [footerAnimation] = useState(new Animated.Value(0));
 
   // Event handlers
   const handleChoice = useCallback(async (choiceId: string) => {
@@ -319,10 +67,6 @@ const StoryScreen = () => {
     // TODO: 다음 스토리 노드로 이동
   }, [currentStory.choices, characterStats]);
 
-  const handleBack = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
-
   const toggleSideMenu = useCallback(() => {
     setIsSideMenuVisible(!isSideMenuVisible);
   }, [isSideMenuVisible]);
@@ -331,17 +75,48 @@ const StoryScreen = () => {
     setIsGameInfoModalVisible(!isGameInfoModalVisible);
   }, [isGameInfoModalVisible]);
 
-  const handleInventory = useCallback(() => {
-    // TODO: 인벤토리 모달 열기
+  const handleFooterButton = useCallback((tabType: FooterTabType) => {
+    if (expandedFooter === tabType) {
+      // 축소
+      Animated.timing(footerAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start(() => {
+        setExpandedFooter(null);
+        setActiveTab('inventory');
+      });
+    } else {
+      // 확장
+      setExpandedFooter(tabType);
+      setActiveTab(tabType);
+      Animated.timing(footerAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [expandedFooter, footerAnimation]);
+
+  const handleTabChange = useCallback((tabType: FooterTabType) => {
+    setActiveTab(tabType);
   }, []);
+
+  const handleInventory = useCallback(() => {
+    handleFooterButton('inventory');
+  }, [handleFooterButton]);
 
   const handleSkills = useCallback(() => {
-    // TODO: 숙련도 모달 열기
-  }, []);
+    handleFooterButton('proficiency');
+  }, [handleFooterButton]);
 
   const handleCompanions = useCallback(() => {
-    // TODO: 동료 모달 열기
-  }, []);
+    handleFooterButton('companions');
+  }, [handleFooterButton]);
+
+  const handleStatus = useCallback(() => {
+    handleFooterButton('status');
+  }, [handleFooterButton]);
 
   // useEffect
   useEffect(() => {
@@ -444,8 +219,6 @@ const StoryScreen = () => {
               ]}>{currentStory.content}</Text>
             </View>
           </ScrollView>
-
-
         </View>
 
         {/* Choices */}
@@ -494,35 +267,151 @@ const StoryScreen = () => {
           </View>
         </View>
 
+        {/* Background Overlay */}
+        {expandedFooter && (
+          <TouchableOpacity
+            style={styles.overlay}
+            activeOpacity={1}
+            onPress={() => handleFooterButton(expandedFooter)}
+          />
+        )}
+
         {/* Footer */}
-        <View style={[
+        <Animated.View style={[
           styles.footer,
-          { backgroundColor: theme.colors.surface }
+          { 
+            backgroundColor: theme.colors.surface,
+            position: expandedFooter ? 'absolute' : 'relative',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: expandedFooter ? '40%' : undefined,
+            zIndex: expandedFooter ? 1001 : 1,
+            flexDirection: expandedFooter ? 'column' : 'row',
+            alignItems: expandedFooter ? 'stretch' : 'center',
+          }
         ]}>
-          <TouchableOpacity style={styles.footerButton} onPress={handleInventory}>
-            <Icon name="package-variant" size={24} color={theme.colors.primary} />
-            <Text style={[
-              styles.footerButtonText,
-              { color: theme.colors.textSecondary }
-            ]}>소지품</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.footerButton} onPress={handleSkills}>
-            <Icon name="sword-cross" size={24} color={theme.colors.primary} />
-            <Text style={[
-              styles.footerButtonText,
-              { color: theme.colors.textSecondary }
-            ]}>숙련도</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.footerButton} onPress={handleCompanions}>
-            <Icon name="account-group" size={24} color={theme.colors.primary} />
-            <Text style={[
-              styles.footerButtonText,
-              { color: theme.colors.textSecondary }
-            ]}>동료</Text>
-          </TouchableOpacity>
-        </View>
+          {!expandedFooter ? (
+            // Normal footer buttons
+            <>
+              <TouchableOpacity style={styles.footerButton} onPress={handleInventory}>
+                <Icon name="package-variant" size={24} color={theme.colors.primary} />
+                <Text style={[
+                  styles.footerButtonText,
+                  { color: theme.colors.textSecondary }
+                ]}>소지품</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.footerButton} onPress={handleSkills}>
+                <Icon name="sword-cross" size={24} color={theme.colors.primary} />
+                <Text style={[
+                  styles.footerButtonText,
+                  { color: theme.colors.textSecondary }
+                ]}>숙련도</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.footerButton} onPress={handleCompanions}>
+                <Icon name="account-group" size={24} color={theme.colors.primary} />
+                <Text style={[
+                  styles.footerButtonText,
+                  { color: theme.colors.textSecondary }
+                ]}>동료</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.footerButton} onPress={handleStatus}>
+                <Icon name="heart-pulse" size={24} color={theme.colors.primary} />
+                <Text style={[
+                  styles.footerButtonText,
+                  { color: theme.colors.textSecondary }
+                ]}>상태</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            // Expanded footer with tabs
+            <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+              {/* Tab Header - Fixed height */}
+              <View style={styles.tabHeader}>
+                <TouchableOpacity 
+                  style={styles.footerButton} 
+                  onPress={() => handleTabChange('inventory')}
+                >
+                  <Icon 
+                    name="package-variant" 
+                    size={24} 
+                    color={activeTab === 'inventory' ? theme.colors.primary : theme.colors.textSecondary} 
+                  />
+                  <Text style={[
+                    styles.footerButtonText,
+                    { color: theme.colors.textSecondary }
+                  ]}>소지품</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.footerButton} 
+                  onPress={() => handleTabChange('proficiency')}
+                >
+                  <Icon 
+                    name="sword-cross" 
+                    size={24} 
+                    color={activeTab === 'proficiency' ? theme.colors.primary : theme.colors.textSecondary} 
+                  />
+                  <Text style={[
+                    styles.footerButtonText,
+                    { color: theme.colors.textSecondary }
+                  ]}>숙련도</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.footerButton} 
+                  onPress={() => handleTabChange('companions')}
+                >
+                  <Icon 
+                    name="account-group" 
+                    size={24} 
+                    color={activeTab === 'companions' ? theme.colors.primary : theme.colors.textSecondary} 
+                  />
+                  <Text style={[
+                    styles.footerButtonText,
+                    { color: theme.colors.textSecondary }
+                  ]}>동료</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.footerButton} 
+                  onPress={() => handleTabChange('status')}
+                >
+                  <Icon 
+                    name="heart-pulse" 
+                    size={24} 
+                    color={activeTab === 'status' ? theme.colors.primary : theme.colors.textSecondary} 
+                  />
+                  <Text style={[
+                    styles.footerButtonText,
+                    { color: theme.colors.textSecondary }
+                  ]}>상태</Text>
+                </TouchableOpacity>
+                
+
+              </View>
+              
+              {/* Tab Content - Scrollable */}
+              <View style={styles.tabContent}>
+                {activeTab === 'inventory' && (
+                  <InventoryTab items={MOCK_INVENTORY} />
+                )}
+                {activeTab === 'proficiency' && (
+                  <ProficiencyTab skills={MOCK_SKILLS} />
+                )}
+                {activeTab === 'companions' && (
+                  <CompanionsTab companions={MOCK_COMPANIONS} />
+                )}
+                {activeTab === 'status' && (
+                  <StatusTab statusEffects={MOCK_STATUS_EFFECTS} />
+                )}
+              </View>
+            </View>
+          )}
+        </Animated.View>
 
         {/* Side Menu */}
         <SideMenu 
@@ -635,7 +524,6 @@ const getStyles = (theme: any, mode: string) => StyleSheet.create({
     lineHeight: 28,
     letterSpacing: -0.2,
   },
-
   choicesSection: {
     paddingHorizontal: 20,
     paddingBottom: 16,
@@ -680,6 +568,7 @@ const getStyles = (theme: any, mode: string) => StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    minHeight: 80,
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: -2 },
@@ -694,12 +583,61 @@ const getStyles = (theme: any, mode: string) => StyleSheet.create({
   footerButton: {
     alignItems: 'center',
     padding: 8,
+    minWidth: 60,
+    minHeight: 60,
+    flex: 1,
   },
   footerButtonText: {
     marginTop: 4,
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: -0.1,
+  },
+  tabHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    height: 80,
+  },
+  tabButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 16,
+    borderRadius: 8,
+    minWidth: 60,
+    minHeight: 60,
+  },
+  activeTabButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  tabButtonText: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.1,
+  },
+  closeButton: {
+    marginLeft: 'auto',
+    padding: 8,
+  },
+  tabContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 1000,
   },
 });
 

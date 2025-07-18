@@ -12,7 +12,7 @@ import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
 // 3. 타입 정의
-type StoreScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Store'>;
+type StoreScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 interface StoryPackage {
   id: string;
