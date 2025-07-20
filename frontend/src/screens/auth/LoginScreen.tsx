@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Text, TextInput, StyleSheet } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useDispatch } from 'react-redux';
@@ -13,11 +13,6 @@ import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
 
 // TypeScript Interfaces
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 // Constants
@@ -36,339 +31,201 @@ const LoginScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const dispatch = useDispatch();
   const { theme, mode } = useTheme();
-  
-  // 5.1 Hooks
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: '',
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  // 5.3 Event handlers with useCallback
-  const handleEmailChange = useCallback((email: string) => {
-    setFormData(prev => ({ ...prev, email }));
-  }, []);
-
-  const handlePasswordChange = useCallback((password: string) => {
-    setFormData(prev => ({ ...prev, password }));
-  }, []);
-
-  const handleTogglePassword = useCallback(() => {
-    setShowPassword(prev => !prev);
-  }, []);
-
-  const handleLogin = useCallback(async () => {
-    if (!formData.email || !formData.password) {
-      return;
-    }
+  // Event handlers with useCallback
+  const handleGoogleLogin = useCallback(async () => {
+    // TODO: 실제 Google 로그인 구현
+    console.log('Google 로그인 시도');
     
-    setIsLoading(true);
-    
-    // TODO: 실제 API 호출로 교체
+    // 임시 구현 - 실제로는 Google OAuth 플로우를 구현해야 함
     setTimeout(() => {
       dispatch(setTokens({ 
-        accessToken: 'dummy_access_token',
-        refreshToken: 'dummy_refresh_token',
+        accessToken: 'google_access_token',
+        refreshToken: 'google_refresh_token',
         expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24시간 후
       }));
       dispatch(setUser({ 
-        id: '1', 
-        email: formData.email, 
-        username: 'Player1',
+        id: 'google_user_1', 
+        email: 'user@gmail.com', 
+        username: 'GoogleUser',
         createdAt: new Date().toISOString(),
         lastLoginAt: new Date().toISOString(),
         status: 'active',
       }));
-      setIsLoading(false);
       navigation.replace('Home');
     }, LOGIN_DELAY);
-  }, [formData.email, formData.password, dispatch, navigation]);
+  }, [dispatch, navigation]);
 
-  const handleRegister = useCallback(() => {
-    navigation.navigate('Register');
-  }, [navigation]);
+  const handleAppleLogin = useCallback(async () => {
+    // TODO: 실제 Apple 로그인 구현
+    console.log('Apple 로그인 시도');
+    
+    // 임시 구현 - 실제로는 Apple Sign-In 플로우를 구현해야 함
+    setTimeout(() => {
+      dispatch(setTokens({ 
+        accessToken: 'apple_access_token',
+        refreshToken: 'apple_refresh_token',
+        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24시간 후
+      }));
+      dispatch(setUser({ 
+        id: 'apple_user_1', 
+        email: 'user@icloud.com', 
+        username: 'AppleUser',
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        status: 'active',
+      }));
+      navigation.replace('Home');
+    }, LOGIN_DELAY);
+  }, [dispatch, navigation]);
 
-  const handleDemoMode = useCallback(() => {
+  const handleGuestLogin = useCallback(() => {
     dispatch(setTokens({ 
-      accessToken: 'demo_access_token',
-      refreshToken: 'demo_refresh_token',
+      accessToken: 'guest_access_token',
+      refreshToken: 'guest_refresh_token',
       expiresAt: Date.now() + (24 * 60 * 60 * 1000)
     }));
     dispatch(setUser(DEMO_USER_DATA));
     navigation.replace('Home');
   }, [dispatch, navigation]);
 
-  // 5.5 JSX return
+  // JSX return
   return (
     <GlassmorphismBackground>
-      <KeyboardAvoidingView 
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView 
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.content}>
-            {/* 헤더 */}
-            <View style={styles.header}>
-              <View style={styles.welcomeContainer}>
-                <Text style={[
-                  styles.welcomeTitle, 
-                  { 
-                    color: theme.colors.text,
-                    fontSize: 24,
-                    fontWeight: '700',
-                  }
-                ]}>다시 오신 것을{'\n'}환영합니다!</Text>
-                <Text style={[
-                  styles.welcomeSubtitle, 
-                  { 
-                    color: theme.colors.textSecondary,
-                    fontSize: 13,
-                    fontWeight: '400',
-                  }
-                ]}>모험을 계속하려면 로그인하세요</Text>
-              </View>
+        <View style={styles.content}>
+          {/* 헤더 */}
+          <View style={styles.header}>
+            <View style={styles.welcomeContainer}>
+              <Text style={[
+                styles.welcomeTitle, 
+                { color: theme.colors.text }
+              ]}>
+                모험의 세계에{'\n'}오신 것을 환영합니다!
+              </Text>
+              <Text style={[
+                styles.welcomeSubtitle, 
+                { color: theme.colors.textSecondary }
+              ]}>
+                계정으로 로그인하여 모험을 시작하세요
+              </Text>
             </View>
+          </View>
 
-            {/* 로그인 폼 */}
-            <GlassmorphismCard
-              elevationLevel={2}
-              style={styles.formCard}
-            >
-              {/* 이메일 입력 */}
-              <View style={styles.inputGroup}>
-                <Text style={[
-                  styles.inputLabel, 
-                  { 
-                    color: theme.colors.text,
-                    fontSize: 13,
-                    fontWeight: '500',
-                  }
-                ]}>이메일</Text>
-                <View style={[
-                  styles.inputContainer, 
-                  { 
-                    backgroundColor: theme.colors.elevation2,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: theme.colors.divider,
-                  }
-                ]}>
-                  <View style={styles.inputIcon}>
-                    <Icon
-                      name="email-outline"
-                      size={20}
-                      color={theme.colors.text}
-                    />
-                  </View>
-                  <TextInput
-                    style={[
-                      styles.textInput, 
-                      { 
-                        color: theme.colors.text,
-                        fontSize: 15,
-                        fontWeight: '400',
-                      }
-                    ]}
-                    placeholder="이메일을 입력하세요"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={formData.email}
-                    onChangeText={handleEmailChange}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                </View>
-              </View>
-
-              {/* 비밀번호 입력 */}
-              <View style={styles.inputGroup}>
-                <Text style={[
-                  styles.inputLabel, 
-                  { 
-                    color: theme.colors.text,
-                    fontSize: 13,
-                    fontWeight: '500',
-                  }
-                ]}>비밀번호</Text>
-                <View style={[
-                  styles.inputContainer, 
-                  { 
-                    backgroundColor: theme.colors.elevation2,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: theme.colors.divider,
-                  }
-                ]}>
-                  <View style={styles.inputIcon}>
-                    <Icon
-                      name="lock-outline"
-                      size={20}
-                      color={theme.colors.text}
-                    />
-                  </View>
-                  <TextInput
-                    style={[
-                      styles.textInput, 
-                      { 
-                        color: theme.colors.text,
-                        fontSize: 15,
-                        fontWeight: '400',
-                      }
-                    ]}
-                    placeholder="비밀번호를 입력하세요"
-                    placeholderTextColor={theme.colors.textSecondary}
-                    value={formData.password}
-                    onChangeText={handlePasswordChange}
-                    secureTextEntry={!showPassword}
-                  />
-                  <TouchableOpacity 
-                    style={styles.passwordToggle}
-                    onPress={handleTogglePassword}
-                  >
-                    <Icon
-                      name={showPassword ? "eye-outline" : "eye-off-outline"}
-                      size={20}
-                      color={theme.colors.text}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* 로그인 버튼 */}
-              <TouchableOpacity
+          {/* 로그인 옵션들 */}
+          <View style={styles.loginOptionsContainer}>
+            {/* 구글 로그인 */}
+            <GlassmorphismCard style={styles.loginOptionCard}>
+              <TouchableOpacity 
                 style={[
-                  styles.loginButton, 
-                  { 
-                    backgroundColor: theme.colors.primary,
-                    borderRadius: 12,
-                  }
+                  styles.loginButton,
+                  { backgroundColor: '#4285F4' }
                 ]}
-                onPress={handleLogin}
-                disabled={isLoading || !formData.email || !formData.password}
+                onPress={handleGoogleLogin}
+                activeOpacity={0.8}
               >
-                <Text style={[
-                  styles.loginButtonText,
-                  { 
-                    color: '#ffffff',
-                    fontSize: 15,
-                    fontWeight: '600',
-                  }
-                ]}>
-                  {isLoading ? '로그인 중...' : '로그인'}
+                <Icon name="google" size={24} color="#FFFFFF" />
+                <Text style={styles.loginButtonText}>
+                  구글 계정으로 로그인
                 </Text>
               </TouchableOpacity>
-
-              {/* 회원가입 버튼 */}
-              <TouchableOpacity
-                style={[
-                  styles.registerButton,
-                  {
-                    backgroundColor: '#fff',
-                    borderRadius: 12,
-                  }
-                ]}
-                onPress={handleRegister}
-              >
-                <Text style={[
-                  styles.registerButtonText,
-                  {
-                    color: theme.colors.primary,
-                    fontSize: 15,
-                    fontWeight: '600',
-                  }
-                ]}>계정 만들기</Text>
-              </TouchableOpacity>
             </GlassmorphismCard>
-          </View>
 
-          {/* 다른 옵션들 */}
-          <View style={styles.optionsContainer}>
-            <GlassmorphismCard
-              elevationLevel={1}
-              style={styles.optionCard}
-            >
+            {/* 애플 로그인 */}
+            <GlassmorphismCard style={styles.loginOptionCard}>
               <TouchableOpacity 
-                style={styles.optionContent}
-                onPress={handleDemoMode}
+                style={[
+                  styles.loginButton,
+                  { backgroundColor: '#000000' }
+                ]}
+                onPress={handleAppleLogin}
+                activeOpacity={0.8}
               >
-                <View style={styles.optionIconContainer}>
-                  <Icon
-                    name="play-outline"
-                    size={24}
-                    color={theme.colors.text}
-                  />
-                </View>
-                <View style={styles.optionInfo}>
-                  <Text style={[
-                    styles.optionTitle,
-                    { 
-                      color: theme.colors.text,
-                      fontSize: 15,
-                      fontWeight: '600',
-                    }
-                  ]}>데모 모드</Text>
-                  <Text style={[
-                    styles.optionSubtitle,
-                    { 
-                      color: theme.colors.textSecondary,
-                      fontSize: 13,
-                      fontWeight: '400',
-                    }
-                  ]}>로그인 없이 체험해보세요</Text>
-                </View>
-                <View style={styles.optionArrow}>
-                  <Icon
-                    name="chevron-right"
-                    size={16}
-                    color={theme.colors.text}
-                  />
-                </View>
+                <Icon name="apple" size={24} color="#FFFFFF" />
+                <Text style={styles.loginButtonText}>
+                  애플 계정으로 로그인
+                </Text>
+              </TouchableOpacity>
+            </GlassmorphismCard>
+
+            {/* 게스트 로그인 */}
+            <GlassmorphismCard style={styles.loginOptionCard}>
+              <TouchableOpacity 
+                style={[
+                  styles.loginButton,
+                  { backgroundColor: theme.colors.elevated }
+                ]}
+                onPress={handleGuestLogin}
+                activeOpacity={0.8}
+              >
+                <Icon name="account-outline" size={24} color={theme.colors.text} />
+                <Text style={[
+                  styles.loginButtonText,
+                  { color: theme.colors.text }
+                ]}>
+                  게스트로 진행하기
+                </Text>
               </TouchableOpacity>
             </GlassmorphismCard>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          {/* 안내 텍스트 */}
+          <View style={styles.infoContainer}>
+            <Text style={[
+              styles.infoText,
+              { color: theme.colors.textSecondary }
+            ]}>
+              게스트 모드로 진행하면 일부 기능이 제한될 수 있습니다.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
     </GlassmorphismBackground>
   );
 };
 
-// Styles moved outside component
+// Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center' as const,
+    justifyContent: 'center',
     padding: 24,
   },
   content: {
     maxWidth: 400,
-    alignSelf: 'center' as const,
-    width: '100%' as const,
+    alignSelf: 'center',
+    width: '100%',
   },
   header: {
-    alignItems: 'center' as const,
-    marginBottom: 40,
+    alignItems: 'center',
+    marginBottom: 48,
   },
   welcomeContainer: {
-    alignItems: 'center' as const,
+    alignItems: 'center',
   },
   welcomeTitle: {
-    textAlign: 'center' as const,
-    marginBottom: 4,
+    fontSize: 28,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: -0.5,
   },
   welcomeSubtitle: {
-    textAlign: 'center' as const,
-    marginTop: 12,
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    lineHeight: 22,
   },
-  formCard: {
+  loginOptionsContainer: {
+    marginBottom: 32,
+  },
+  loginOptionCard: {
+    marginBottom: 16,
     borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
+    overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 4 },
@@ -380,95 +237,29 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    marginBottom: 8,
-  },
-  inputContainer: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  inputIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
-    marginRight: 12,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '400' as const,
-  },
-  passwordToggle: {
-    padding: 8,
-  },
   loginButton: {
-    padding: 16,
-    alignItems: 'center' as const,
-    marginTop: 8,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    gap: 12,
   },
   loginButtonText: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    letterSpacing: -0.2,
   },
-  registerButton: {
-    padding: 16,
-    alignItems: 'center' as const,
-    marginTop: 12,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+  infoContainer: {
+    alignItems: 'center',
   },
-  registerButtonText: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-  },
-  optionsContainer: {
-    // Empty as styles are applied inline
-  },
-  optionCard: {
-    marginBottom: 16,
-    overflow: 'hidden' as const,
-    maxWidth: 400,
-    alignSelf: 'center' as const,
-    width: '100%' as const,
-  },
-  optionContent: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
-    padding: 20,
-  },
-  optionIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
-    marginRight: 16,
-  },
-  optionInfo: {
-    flex: 1,
-  },
-  optionTitle: {
-    marginBottom: 2,
-  },
-  optionSubtitle: {
-    // Styles applied inline
-  },
-  optionArrow: {
-    padding: 8,
+  infoText: {
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
 

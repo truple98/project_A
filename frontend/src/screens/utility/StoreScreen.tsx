@@ -1,5 +1,5 @@
 // 1. React 및 외부 라이브러리 임포트 (알파벳 순서)
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -93,17 +93,34 @@ const MOCK_STORY_PACKAGES: StoryPackage[] = [
     difficulty: 'hard',
     tags: ['우주', '탐험', 'SF'],
   },
+  {
+    id: '6',
+    title: '시간 여행자',
+    description: '시간을 넘나드는 모험을 떠나보세요. 과거와 미래를 오가며 역사의 비밀을 밝혀내세요.',
+    price: 4500,
+    isOnSale: false,
+    isOwned: false,
+    storyCount: 9,
+    estimatedPlayTime: '4-5시간',
+    difficulty: 'hard',
+    tags: ['시간여행', '역사', '모험'],
+  },
 ];
 
 // 5. 메인 스크린 컴포넌트 함수 정의
 const StoreScreen = () => {
   // 5.1. Hooks 선언
   const navigation = useNavigation<StoreScreenNavigationProp>();
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
 
   // 5.2. 이벤트 핸들러 및 유틸리티 함수 (useCallback으로 래핑)
   const handleGoBack = useCallback(() => {
     navigation.goBack();
+  }, [navigation]);
+
+  const handleStoryPress = useCallback((storyPackage: StoryPackage) => {
+    // 스토리 상세 페이지로 이동
+    (navigation as any).navigate('StoreDetail', { storyId: storyPackage.id });
   }, [navigation]);
 
   const handlePurchase = useCallback((storyPackage: StoryPackage) => {
@@ -128,26 +145,8 @@ const StoreScreen = () => {
     );
   }, []);
 
-  const getDifficultyColor = useCallback((difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return theme.colors.success;
-      case 'normal': return theme.colors.warning;
-      case 'hard': return theme.colors.error;
-      default: return theme.colors.textSecondary;
-    }
-  }, [theme.colors]);
-
-  const getDifficultyText = useCallback((difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return '쉬움';
-      case 'normal': return '보통';
-      case 'hard': return '어려움';
-      default: return '보통';
-    }
-  }, []);
-
   // 5.3. 스타일 정의 (theme 객체 활용)
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -167,6 +166,7 @@ const StoreScreen = () => {
       width: 48,
       height: 48,
       borderRadius: 24,
+      backgroundColor: theme.colors.surface,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -174,147 +174,148 @@ const StoreScreen = () => {
       fontSize: 28,
       fontWeight: '700',
       letterSpacing: -0.5,
+      color: theme.colors.text,
+      flex: 1,
+      textAlign: 'center',
     },
     placeholder: {
       width: 48,
     },
-    content: {
+    mainContent: {
       flex: 1,
       paddingHorizontal: 24,
-      paddingBottom: 32,
+      paddingTop: 16,
     },
-    section: {
-      marginBottom: 32,
+    gridContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
-    sectionTitle: {
-      fontSize: 22,
-      fontWeight: '600',
-      marginBottom: 16,
-      letterSpacing: -0.3,
+    column: {
+      flex: 1,
+      marginHorizontal: 4,
     },
-    packageCard: {
-      marginBottom: 16,
+    thumbnailContainer: {
+      aspectRatio: 1,
       borderRadius: 16,
-      overflow: 'hidden',
-    },
-    packageHeader: {
-      padding: 20,
-    },
-    packageTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      marginBottom: 8,
-      letterSpacing: -0.3,
-    },
-    packageDescription: {
-      fontSize: 14,
-      lineHeight: 20,
-      marginBottom: 16,
-      letterSpacing: -0.1,
-    },
-    packageInfo: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      marginBottom: 12,
+      backgroundColor: theme.colors.elevation1,
+      justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
     },
-    packageStats: {
-      flexDirection: 'row',
-      gap: 16,
-    },
-    statItem: {
-      alignItems: 'center',
-    },
-    statValue: {
-      fontSize: 16,
-      fontWeight: '600',
-      marginBottom: 4,
-      letterSpacing: -0.2,
-    },
-    statLabel: {
+    thumbnailText: {
       fontSize: 12,
-      letterSpacing: -0.1,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+      paddingHorizontal: 8,
     },
-    difficultyBadge: {
+    titleContainer: {
+      height: 80,
+      borderRadius: 16,
+      marginBottom: 16,
+      backgroundColor: theme.colors.elevation1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 12,
     },
-    difficultyText: {
-      fontSize: 12,
-      fontWeight: '600',
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    packageTags: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-      marginBottom: 16,
-    },
-    tag: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
-    },
-    tagText: {
-      fontSize: 12,
-      fontWeight: '500',
-      letterSpacing: -0.1,
-    },
-    packageFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingBottom: 20,
-    },
-    priceContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    currentPrice: {
-      fontSize: 20,
-      fontWeight: '700',
-      letterSpacing: -0.3,
-    },
-    originalPrice: {
-      fontSize: 16,
-      textDecorationLine: 'line-through',
-      letterSpacing: -0.2,
-    },
-    saleBadge: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
-    },
-    saleText: {
-      fontSize: 12,
-      fontWeight: '600',
-      letterSpacing: -0.1,
-    },
-    purchaseButton: {
-      paddingHorizontal: 20,
-      paddingVertical: 12,
-      borderRadius: 20,
-    },
-    purchaseButtonText: {
+    titleText: {
       fontSize: 14,
       fontWeight: '600',
-      letterSpacing: -0.1,
+      color: theme.colors.text,
+      textAlign: 'center',
+      lineHeight: 18,
+    },
+    priceText: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginTop: 4,
     },
     ownedBadge: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      borderRadius: 20,
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+      backgroundColor: theme.colors.success,
     },
     ownedText: {
-      fontSize: 14,
+      fontSize: 10,
       fontWeight: '600',
-      letterSpacing: -0.1,
+      color: '#FFFFFF',
     },
-  });
+    saleBadge: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 6,
+      backgroundColor: theme.colors.error,
+    },
+    saleText: {
+      fontSize: 10,
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+  }), [theme, mode]);
+
+  // 2열 그리드로 데이터 재구성
+  const gridData = useMemo(() => {
+    const leftColumn: StoryPackage[] = [];
+    const rightColumn: StoryPackage[] = [];
+    
+    MOCK_STORY_PACKAGES.forEach((storyPackage, index) => {
+      if (index % 2 === 0) {
+        leftColumn.push(storyPackage);
+      } else {
+        rightColumn.push(storyPackage);
+      }
+    });
+
+    return { leftColumn, rightColumn };
+  }, []);
+
+  const renderStoryItem = useCallback((storyPackage: StoryPackage, isLeft: boolean) => (
+    <View key={storyPackage.id} style={isLeft ? styles.column : styles.column}>
+      {/* 스토리 일러스트 썸네일 */}
+      <TouchableOpacity 
+        style={styles.thumbnailContainer}
+        onPress={() => handleStoryPress(storyPackage)}
+      >
+        <Text style={styles.thumbnailText}>스토리 일러스트 썸네일</Text>
+        {storyPackage.isOwned && (
+          <View style={styles.ownedBadge}>
+            <Text style={styles.ownedText}>보유</Text>
+          </View>
+        )}
+        {storyPackage.isOnSale && (
+          <View style={styles.saleBadge}>
+            <Text style={styles.saleText}>할인</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+      
+      {/* 스토리 타이틀 */}
+      <TouchableOpacity 
+        style={styles.titleContainer}
+        onPress={() => handleStoryPress(storyPackage)}
+      >
+        <Text style={styles.titleText}>{storyPackage.title}</Text>
+        <Text style={styles.priceText}>
+          {storyPackage.isOnSale && storyPackage.originalPrice && (
+            <Text style={{ textDecorationLine: 'line-through', color: theme.colors.textTertiary }}>
+              {storyPackage.originalPrice.toLocaleString()}원{' '}
+            </Text>
+          )}
+          {storyPackage.price.toLocaleString()}원
+        </Text>
+      </TouchableOpacity>
+    </View>
+  ), [styles, handleStoryPress, theme.colors.textTertiary]);
 
   // 5.4. JSX 반환
   return (
@@ -324,7 +325,7 @@ const StoreScreen = () => {
         <GlassmorphismCard style={styles.header}>
           <View style={styles.headerContent}>
             <TouchableOpacity 
-              style={[styles.backButton, { backgroundColor: theme.colors.surface }]}
+              style={styles.backButton}
               onPress={handleGoBack}
             >
               <Icon
@@ -333,117 +334,31 @@ const StoreScreen = () => {
                 color={theme.colors.text}
               />
             </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-              스토어
-            </Text>
+            <Text style={styles.headerTitle}>스토어</Text>
             <View style={styles.placeholder} />
           </View>
         </GlassmorphismCard>
         
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* 스토리 패키지 목록 */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-              스토리 패키지
-            </Text>
-            
-            {MOCK_STORY_PACKAGES.map((packageItem) => (
-              <View key={packageItem.id} style={[styles.packageCard, { backgroundColor: theme.colors.surface }]}>
-                <View style={styles.packageHeader}>
-                  <Text style={[styles.packageTitle, { color: theme.colors.text }]}>
-                    {packageItem.title}
-                  </Text>
-                  <Text style={[styles.packageDescription, { color: theme.colors.textSecondary }]}>
-                    {packageItem.description}
-                  </Text>
-                  
-                  <View style={styles.packageInfo}>
-                    <View style={styles.packageStats}>
-                      <View style={styles.statItem}>
-                        <Text style={[styles.statValue, { color: theme.colors.text }]}>
-                          {packageItem.storyCount}
-                        </Text>
-                        <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-                          스토리
-                        </Text>
-                      </View>
-                      <View style={styles.statItem}>
-                        <Text style={[styles.statValue, { color: theme.colors.text }]}>
-                          {packageItem.estimatedPlayTime}
-                        </Text>
-                        <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-                          예상 시간
-                        </Text>
-                      </View>
-                    </View>
-                    
-                    <View style={[
-                      styles.difficultyBadge,
-                      { backgroundColor: getDifficultyColor(packageItem.difficulty) + '20' }
-                    ]}>
-                      <Text style={[
-                        styles.difficultyText,
-                        { color: getDifficultyColor(packageItem.difficulty) }
-                      ]}>
-                        {getDifficultyText(packageItem.difficulty)}
-                      </Text>
-                    </View>
-                  </View>
-                  
-                  <View style={styles.packageTags}>
-                    {packageItem.tags.map((tag, index) => (
-                      <View key={index} style={[
-                        styles.tag,
-                        { backgroundColor: theme.colors.elevated }
-                      ]}>
-                        <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>
-                          #{tag}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-                
-                <View style={styles.packageFooter}>
-                  <View style={styles.priceContainer}>
-                    {packageItem.isOnSale && (
-                      <Text style={[styles.originalPrice, { color: theme.colors.textTertiary }]}>
-                        {packageItem.originalPrice?.toLocaleString()}원
-                      </Text>
-                    )}
-                    <Text style={[styles.currentPrice, { color: theme.colors.text }]}>
-                      {packageItem.price.toLocaleString()}원
-                    </Text>
-                    {packageItem.isOnSale && (
-                      <View style={[styles.saleBadge, { backgroundColor: theme.colors.error }]}>
-                        <Text style={[styles.saleText, { color: '#FFFFFF' }]}>
-                          할인
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  
-                  {packageItem.isOwned ? (
-                    <View style={[styles.ownedBadge, { backgroundColor: theme.colors.success }]}>
-                      <Text style={[styles.ownedText, { color: '#FFFFFF' }]}>
-                        보유중
-                      </Text>
-                    </View>
-                  ) : (
-                    <TouchableOpacity
-                      style={[styles.purchaseButton, { backgroundColor: theme.colors.primary }]}
-                      onPress={() => handlePurchase(packageItem)}
-                    >
-                      <Text style={[styles.purchaseButtonText, { color: '#FFFFFF' }]}>
-                        구매
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
+        <View style={styles.mainContent}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {/* 2열 그리드 레이아웃 */}
+            <View style={styles.gridContainer}>
+              {/* 왼쪽 컬럼 */}
+              <View style={styles.column}>
+                {gridData.leftColumn.map((storyPackage, index) => 
+                  renderStoryItem(storyPackage, true)
+                )}
               </View>
-            ))}
-          </View>
-        </ScrollView>
+              
+              {/* 오른쪽 컬럼 */}
+              <View style={styles.column}>
+                {gridData.rightColumn.map((storyPackage, index) => 
+                  renderStoryItem(storyPackage, false)
+                )}
+              </View>
+            </View>
+          </ScrollView>
+        </View>
       </View>
     </GlassmorphismBackground>
   );

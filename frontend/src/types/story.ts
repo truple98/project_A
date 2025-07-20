@@ -25,20 +25,20 @@ export interface StoryCharacterStats {
   maxStress: number;
 }
 
+export interface PlayerStatus {
+  id: string;
+  name: string;
+  value: string;
+  color: string;
+}
+
 export interface PlayerInfo {
   name: string;
   daysPassed: number;
-  energy: number;
-  maxEnergy: number;
-  health: number;
-  maxHealth: number;
-  motivation: number;
-  maxMotivation: number;
-  stress: number;
-  maxStress: number;
+  statuses: PlayerStatus[];
 }
 
-export interface Task {
+export interface Quest {
   id: string;
   title: string;
   description: string;
@@ -46,24 +46,39 @@ export interface Task {
   status: 'active' | 'completed' | 'failed';
   progress: number;
   maxProgress: number;
+  rewards?: string[];
 }
 
-export interface NPC {
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  category: 'story' | 'combat' | 'social' | 'exploration' | 'collection';
+  status: 'locked' | 'unlocked';
+  icon: string;
+  unlockCondition: string;
+  rewards?: string[];
+}
+
+export interface MetPerson {
   id: string;
   name: string;
   relationship: number;
   maxRelationship: number;
   lastMet: string;
   description: string;
+  location: string;
+  importance: 'main' | 'sub' | 'background';
 }
 
-export interface DialogueRecord {
+export interface StoryNode {
   id: string;
+  title: string;
+  type: 'story' | 'choice' | 'consequence';
+  status: 'visited' | 'current' | 'locked';
   timestamp: string;
-  npcName: string;
-  content: string;
-  playerChoice: string;
-  consequence: string;
+  choices?: string[];
+  consequences?: string[];
 }
 
 // 푸터 탭 관련 타입들

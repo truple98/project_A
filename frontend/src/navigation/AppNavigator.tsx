@@ -15,7 +15,8 @@
 // ========================================
 // 1. React 및 내장 Hooks
 // ========================================
-import React, { useMemo } from 'react';
+import * as React from 'react';
+import { useMemo } from 'react';
 
 // ========================================
 // 2. React Navigation 관련
@@ -33,14 +34,14 @@ import { useSelector } from 'react-redux';
 // 🔐 Authentication Screens
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
-import RegisterScreen from '../screens/auth/RegisterScreen';
 
 // 🎮 Game Flow Screens  
 import HomeScreen from '../screens/game/HomeScreen';
-import GameStartScreen from '../screens/game/GameStartScreen';
 import StoryScreen from '../screens/game/StoryScreen';
 import ResultScreen from '../screens/game/ResultScreen';
 import EndingScreen from '../screens/game/EndingScreen';
+import ChapterScreen from '../screens/game/ChapterScreen';
+import ChapterDetailScreen from '../screens/game/ChapterDetailScreen';
 
 // 👤 Character & Progress Screens
 import HistoryScreen from '../screens/player/HistoryScreen';
@@ -48,12 +49,28 @@ import AccountScreen from '../screens/player/AccountScreen';
 
 // ⚙️ Utility & Settings Screens
 import SettingsScreen from '../screens/utility/SettingsScreen';
+import ThemeSettingsScreen from '../screens/utility/ThemeSettingsScreen';
+import LanguageSettingsScreen from '../screens/utility/LanguageSettingsScreen';
+import TermsOfServiceScreen from '../screens/utility/TermsOfServiceScreen';
+import AppInfoScreen from '../screens/utility/AppInfoScreen';
 import StoreScreen from '../screens/utility/StoreScreen';
+import StoreDetailScreen from '../screens/utility/StoreDetailScreen';
 import HelpScreen from '../screens/utility/HelpScreen';
-import EncyclopediaScreen from '../screens/utility/EncyclopediaScreen';
+import EncyclopediaScreen from '../screens/utility/encyclopedia/EncyclopediaScreen';
 
 // 🏆 Achievement Screen
 import AchievementScreen from '../screens/player/AchievementScreen';
+
+// 📚 Encyclopedia Detail Screens
+import LocationEncyclopediaScreen from '../screens/utility/encyclopedia/LocationEncyclopediaScreen';
+import CharacterEncyclopediaScreen from '../screens/utility/encyclopedia/CharacterEncyclopediaScreen';
+import CreatureEncyclopediaScreen from '../screens/utility/encyclopedia/CreatureEncyclopediaScreen';
+import CompanionEncyclopediaScreen from '../screens/utility/encyclopedia/CompanionEncyclopediaScreen';
+import ItemEncyclopediaScreen from '../screens/utility/encyclopedia/ItemEncyclopediaScreen';
+import StatusEncyclopediaScreen from '../screens/utility/encyclopedia/StatusEncyclopediaScreen';
+import SkillEncyclopediaScreen from '../screens/utility/encyclopedia/SkillEncyclopediaScreen';
+import EndingEncyclopediaScreen from '../screens/utility/encyclopedia/EndingEncyclopediaScreen';
+import EndingDetailScreen from '../screens/utility/encyclopedia/EndingDetailScreen';
 
 // ========================================
 // 5. 프로젝트 내부 - 타입 및 스토어
@@ -107,7 +124,7 @@ const AppNavigator: React.FC = () => {
   /**
    * 인증 관련 스크린들을 렌더링
    */
-  const renderAuthScreens = (): JSX.Element[] => [
+  const renderAuthScreens = (): React.ReactElement[] => [
     <Stack.Screen 
       key={ROUTES.AUTH.WELCOME}
       name={ROUTES.AUTH.WELCOME} 
@@ -118,27 +135,17 @@ const AppNavigator: React.FC = () => {
       name={ROUTES.AUTH.LOGIN} 
       component={LoginScreen} 
     />,
-    <Stack.Screen 
-      key={ROUTES.AUTH.REGISTER}
-      name={ROUTES.AUTH.REGISTER} 
-      component={RegisterScreen} 
-    />,
   ];
 
   /**
    * 메인 앱 스크린들을 렌더링
    */
-  const renderMainAppScreens = (): JSX.Element[] => [
+  const renderMainAppScreens = (): React.ReactElement[] => [
     // 🎮 게임 플로우 스크린들
     <Stack.Screen 
       key={ROUTES.MAIN.HOME}
       name={ROUTES.MAIN.HOME} 
       component={HomeScreen} 
-    />,
-    <Stack.Screen 
-      key={ROUTES.MAIN.GAME_START}
-      name={ROUTES.MAIN.GAME_START} 
-      component={GameStartScreen} 
     />,
     <Stack.Screen 
       key="Story"
@@ -158,16 +165,89 @@ const AppNavigator: React.FC = () => {
     
     // 👤 캐릭터 및 진행상황 스크린들
     <Stack.Screen 
-      key="Encyclopedia"
-      name="Encyclopedia" 
-      component={EncyclopediaScreen} 
+      key="Account"
+      name={"Account" as any} 
+      component={AccountScreen} 
     />,
     <Stack.Screen 
       key={ROUTES.CHARACTER.HISTORY}
       name={ROUTES.CHARACTER.HISTORY} 
       component={HistoryScreen} 
     />,
-
+    
+    // 📚 도감 및 스토어 스크린들
+    <Stack.Screen 
+      key="Encyclopedia"
+      name={"Encyclopedia" as any} 
+      component={EncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="Store"
+      name={"Store" as any} 
+      component={StoreScreen} 
+    />,
+    <Stack.Screen 
+      key="StoreDetail"
+      name={"StoreDetail" as any} 
+      component={StoreDetailScreen} 
+    />,
+    <Stack.Screen 
+      key="Chapter"
+      name={"Chapter" as any} 
+      component={ChapterScreen} 
+    />,
+    <Stack.Screen 
+      key="ChapterDetail"
+      name={"ChapterDetail" as any} 
+      component={ChapterDetailScreen} 
+    />,
+    
+    // 📚 도감 상세 페이지들
+    <Stack.Screen 
+      key="LocationEncyclopedia"
+      name={"LocationEncyclopedia" as any} 
+      component={LocationEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="CharacterEncyclopedia"
+      name={"CharacterEncyclopedia" as any} 
+      component={CharacterEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="CreatureEncyclopedia"
+      name={"CreatureEncyclopedia" as any} 
+      component={CreatureEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="CompanionEncyclopedia"
+      name={"CompanionEncyclopedia" as any} 
+      component={CompanionEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="ItemEncyclopedia"
+      name={"ItemEncyclopedia" as any} 
+      component={ItemEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="StatusEncyclopedia"
+      name={"StatusEncyclopedia" as any} 
+      component={StatusEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="SkillEncyclopedia"
+      name={"SkillEncyclopedia" as any} 
+      component={SkillEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="EndingEncyclopedia"
+      name={"EndingEncyclopedia" as any} 
+      component={EndingEncyclopediaScreen} 
+    />,
+    <Stack.Screen 
+      key="EndingDetail"
+      name={"EndingDetail" as any} 
+      component={EndingDetailScreen} 
+    />,
     
     // ⚙️ 설정 및 계정 스크린들
     <Stack.Screen 
@@ -176,19 +256,29 @@ const AppNavigator: React.FC = () => {
       component={SettingsScreen} 
     />,
     <Stack.Screen 
-      key={ROUTES.SETTINGS.ACCOUNT}
-      name={ROUTES.SETTINGS.ACCOUNT} 
-      component={AccountScreen} 
+      key="ThemeSettings"
+      name={"ThemeSettings" as any} 
+      component={ThemeSettingsScreen} 
+    />,
+    <Stack.Screen 
+      key="LanguageSettings"
+      name={"LanguageSettings" as any} 
+      component={LanguageSettingsScreen} 
+    />,
+    <Stack.Screen 
+      key="TermsOfService"
+      name={"TermsOfService" as any} 
+      component={TermsOfServiceScreen} 
+    />,
+    <Stack.Screen 
+      key="AppInfo"
+      name={"AppInfo" as any} 
+      component={AppInfoScreen} 
     />,
     <Stack.Screen 
       key={ROUTES.SETTINGS.ACHIEVEMENT}
-      name={ROUTES.SETTINGS.ACHIEVEMENT} 
+      name={ROUTES.SETTINGS.ACHIEVEMENT as keyof RootStackParamList}
       component={AchievementScreen} 
-    />,
-    <Stack.Screen 
-      key={ROUTES.SETTINGS.STORE}
-      name={ROUTES.SETTINGS.STORE} 
-      component={StoreScreen} 
     />,
     <Stack.Screen 
       key={ROUTES.SETTINGS.HELP}

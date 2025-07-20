@@ -51,31 +51,7 @@ export type ItemType = 'weapon' | 'armor' | 'accessory' | 'consumable' | 'quest'
  */
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 
-/**
- * 새 게임 시작 요청 인터페이스
- * 
- * @interface StartGameRequest
- */
-export interface StartGameRequest {
-  /** 캐릭터 이름 */
-  characterName: string;
-  
-  /** 캐릭터 클래스 */
-  characterClass: CharacterClass;
-  
-  /** 게임 난이도 */
-  difficulty: GameDifficulty;
-  
-  /** 게임 시나리오 ID (선택사항) */
-  scenarioId?: string;
-  
-  /** 커스터마이징 옵션 (선택사항) */
-  customOptions?: {
-    appearance?: Record<string, any>;
-    startingStats?: Record<string, number>;
-    startingItems?: string[];
-  };
-}
+
 
 /**
  * 스토리 선택 요청 인터페이스
@@ -359,7 +335,6 @@ export interface GameSaveData {
  * API 엔드포인트 상수
  */
 const GAME_ENDPOINTS = {
-  START_GAME: '/game/start',
   LOAD_GAME: '/game/load',
   SAVE_GAME: '/game/save',
   DELETE_SAVE: '/game/save/delete',
@@ -581,102 +556,8 @@ class GameAPI {
   // 7. 게임 API 메서드들
   // ========================================
 
-  /**
-   * 새 게임 시작
-   * 
-   * @param gameData - 게임 시작 데이터
-   * @returns Promise<ApiResponse<GameSession>>
-   * 
-   * @throws {ApiError} 게임 시작 실패 시
-   * 
-   * @example
-   * ```typescript
-   * try {
-   *   const response = await gameAPI.startGame({
-   *     characterName: '용감한전사',
-   *     characterClass: 'warrior',
-   *     difficulty: 'normal'
-   *   });
-   *   console.log('게임 시작:', response.data.sessionId);
-   * } catch (error) {
-   *   console.error('게임 시작 실패:', error.message);
-   * }
-   * ```
-   */
-  public async startGame(gameData: StartGameRequest): Promise<ApiResponse<GameSession>> {
-    try {
-      // 입력 데이터 검증
-      if (!validateCharacterName(gameData.characterName)) {
-        throw new ApiError(
-          '캐릭터명은 2-20자의 한글, 영문, 숫자만 사용 가능합니다.',
-          400,
-          'INVALID_CHARACTER_NAME'
-        );
-      }
 
-      const validClasses: CharacterClass[] = ['warrior', 'mage', 'rogue', 'archer', 'paladin', 'priest'];
-      if (!validClasses.includes(gameData.characterClass)) {
-        throw new ApiError('유효하지 않은 캐릭터 클래스입니다.', 400, 'INVALID_CHARACTER_CLASS');
-      }
 
-      const validDifficulties: GameDifficulty[] = ['easy', 'normal', 'hard', 'nightmare'];
-      if (!validDifficulties.includes(gameData.difficulty)) {
-        throw new ApiError('유효하지 않은 게임 난이도입니다.', 400, 'INVALID_DIFFICULTY');
-      }
-
-      // TODO: 실제 API 호출로 교체
-      await delay(MOCK_DELAY);
-
-      // 새 게임 세션 생성
-      const sessionId = generateId('session');
-      const gameSession: GameSession = {
-        sessionId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: 'active',
-        playTime: 0,
-        character: {
-          name: gameData.characterName,
-          class: gameData.characterClass,
-          stats: { ...DEFAULT_CHARACTER_STATS[gameData.characterClass] },
-        },
-        currentStoryNodeId: START_STORY_NODE.id,
-        inventory: [],
-        gameSettings: {
-          difficulty: gameData.difficulty,
-          scenarioId: gameData.scenarioId,
-          autoSave: true,
-          soundEnabled: true,
-          musicEnabled: true,
-        },
-        gameStats: {
-          totalChoicesMade: 0,
-          totalPlayTime: 0,
-          checkpointsReached: 0,
-          achievementsUnlocked: [],
-        },
-      };
-
-      // 현재 세션 설정
-      this.setCurrentSession(sessionId);
-
-      return {
-        success: true,
-        data: gameSession,
-        message: `새로운 모험이 시작되었습니다! ${gameData.characterName}님, 환영합니다.`,
-      };
-    } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      
-      throw new ApiError(
-        '게임 시작 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-        500,
-        'START_GAME_ERROR'
-      );
-    }
-  }
 
   /**
    * 스토리 진행 (선택지 선택)

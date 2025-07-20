@@ -41,30 +41,7 @@ export interface LoginRequest {
   rememberMe?: boolean;
 }
 
-/**
- * 회원가입 요청 인터페이스
- * 
- * @interface RegisterRequest
- */
-export interface RegisterRequest {
-  /** 사용자 이메일 주소 */
-  email: string;
-  
-  /** 사용자 비밀번호 */
-  password: string;
-  
-  /** 비밀번호 확인 */
-  confirmPassword: string;
-  
-  /** 사용자 이름 */
-  username: string;
-  
-  /** 서비스 이용약관 동의 */
-  agreeToTerms: boolean;
-  
-  /** 개인정보 처리방침 동의 */
-  agreeToPrivacy: boolean;
-}
+
 
 /**
  * 비밀번호 재설정 요청 인터페이스
@@ -381,95 +358,7 @@ class AuthAPI {
     }
   }
 
-  /**
-   * 사용자 회원가입
-   * 
-   * @param userData - 회원가입 사용자 데이터
-   * @returns Promise<ApiResponse<AuthResponse>>
-   * 
-   * @throws {ApiError} 회원가입 실패 시
-   * 
-   * @example
-   * ```typescript
-   * try {
-   *   const response = await authAPI.register({
-   *     email: 'newuser@example.com',
-   *     password: 'SecurePass123!',
-   *     confirmPassword: 'SecurePass123!',
-   *     username: 'NewUser',
-   *     agreeToTerms: true,
-   *     agreeToPrivacy: true
-   *   });
-   *   console.log('회원가입 성공:', response.data.user);
-   * } catch (error) {
-   *   console.error('회원가입 실패:', error.message);
-   * }
-   * ```
-   */
-  public async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
-    try {
-      // 입력 데이터 검증
-      if (!validateEmail(userData.email)) {
-        throw new ApiError('유효하지 않은 이메일 형식입니다.', 400, 'INVALID_EMAIL');
-      }
 
-      if (!validatePassword(userData.password)) {
-        throw new ApiError(
-          '비밀번호는 최소 8자 이상, 대소문자, 숫자, 특수문자를 포함해야 합니다.',
-          400,
-          'INVALID_PASSWORD'
-        );
-      }
-
-      if (userData.password !== userData.confirmPassword) {
-        throw new ApiError('비밀번호가 일치하지 않습니다.', 400, 'PASSWORD_MISMATCH');
-      }
-
-      if (!userData.username || userData.username.length < 2) {
-        throw new ApiError('사용자명은 최소 2자 이상이어야 합니다.', 400, 'INVALID_USERNAME');
-      }
-
-      if (!userData.agreeToTerms || !userData.agreeToPrivacy) {
-        throw new ApiError('서비스 이용약관과 개인정보 처리방침에 동의해야 합니다.', 400, 'TERMS_NOT_AGREED');
-      }
-
-      // TODO: 실제 API 호출로 교체
-      await delay(MOCK_DELAY);
-
-      // 임시 성공 응답 생성
-      const authResponse: AuthResponse = {
-        accessToken: generateTempToken(TEMP_USER_DATA.id),
-        refreshToken: generateTempToken(TEMP_USER_DATA.id + '-refresh'),
-        expiresAt: generateExpiresAt(24),
-        user: {
-          ...TEMP_USER_DATA,
-          email: userData.email,
-          username: userData.username,
-          createdAt: new Date().toISOString(),
-        },
-      };
-
-      // 토큰 저장
-      this.setAccessToken(authResponse.accessToken);
-      this.setRefreshToken(authResponse.refreshToken);
-
-      return {
-        success: true,
-        data: authResponse,
-        message: '회원가입이 완료되었습니다. 환영합니다!',
-      };
-    } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      
-      throw new ApiError(
-        '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-        500,
-        'REGISTER_ERROR'
-      );
-    }
-  }
 
   /**
    * 사용자 로그아웃

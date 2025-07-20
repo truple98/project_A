@@ -18,17 +18,17 @@ type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splas
 const SplashScreen = () => {
   // 4.1 Hooks
   const navigation = useNavigation<SplashScreenNavigationProp>();
-  const token = useSelector((state: RootState) => state.auth.token);
+  const { accessToken } = useSelector((state: RootState) => state.auth);
   const { theme, mode } = useTheme();
 
   // 4.2 Event handlers
   const navigateToScreen = useCallback(() => {
-    if (token) {
+    if (accessToken) {
       navigation.replace('Home');
     } else {
       navigation.replace('Login');
     }
-  }, [navigation, token]);
+  }, [navigation, accessToken]);
 
   // 4.3 Effects
   useEffect(() => {
@@ -38,7 +38,7 @@ const SplashScreen = () => {
 
   // 4.4 Render
   return (
-    <GlassmorphismBackground isDark={mode === 'dark'}>
+    <GlassmorphismBackground>
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.appSection}>

@@ -1,10 +1,10 @@
 import { 
   StoryData, 
   StoryCharacterStats, 
-  PlayerInfo, 
-  Task, 
-  NPC, 
-  DialogueRecord,
+  Quest, 
+  Achievement, 
+  MetPerson, 
+  StoryNode,
   InventoryItem,
   Skill,
   Companion,
@@ -62,20 +62,7 @@ export const INITIAL_CHARACTER_STATS: StoryCharacterStats = {
 };
 
 // 목 데이터
-export const MOCK_PLAYER_INFO: PlayerInfo = {
-  name: '아리아 스톰윈드',
-  daysPassed: 45,
-  energy: 3,
-  maxEnergy: 4,
-  health: 4,
-  maxHealth: 4,
-  motivation: 7,
-  maxMotivation: 10,
-  stress: 3,
-  maxStress: 10,
-};
-
-export const MOCK_TASKS: Task[] = [
+export const MOCK_QUESTS: Quest[] = [
   {
     id: 'main1',
     title: '고대 마법서 해독',
@@ -84,6 +71,7 @@ export const MOCK_TASKS: Task[] = [
     status: 'active',
     progress: 3,
     maxProgress: 10,
+    rewards: ['고대 마법 지식', '경험치 500', '골드 1000'],
   },
   {
     id: 'sub1',
@@ -93,6 +81,7 @@ export const MOCK_TASKS: Task[] = [
     status: 'active',
     progress: 7,
     maxProgress: 10,
+    rewards: ['마법 재료', '경험치 200'],
   },
   {
     id: 'sub2',
@@ -102,52 +91,102 @@ export const MOCK_TASKS: Task[] = [
     status: 'completed',
     progress: 10,
     maxProgress: 10,
+    rewards: ['협력 기술', '평판 +10'],
   },
 ];
 
-export const MOCK_NPCS: NPC[] = [
+export const MOCK_ACHIEVEMENTS: Achievement[] = [
   {
-    id: 'npc1',
+    id: 'first_quest',
+    title: '첫 번째 퀘스트',
+    description: '첫 번째 퀘스트를 완료했습니다.',
+    category: 'story',
+    status: 'unlocked',
+    icon: 'flag-checkered',
+    unlockCondition: '첫 번째 퀘스트 완료',
+    rewards: ['경험치 100'],
+  },
+  {
+    id: 'social_butterfly',
+    title: '사교적',
+    description: '10명의 NPC와 친밀도를 50 이상으로 높였습니다.',
+    category: 'social',
+    status: 'unlocked',
+    icon: 'account-group',
+    unlockCondition: '10명의 NPC와 친밀도 50+',
+    rewards: ['평판 +20'],
+  },
+  {
+    id: 'explorer',
+    title: '탐험가',
+    description: '5개의 새로운 장소를 발견했습니다.',
+    category: 'exploration',
+    status: 'locked',
+    icon: 'map-marker-path',
+    unlockCondition: '5개 장소 발견',
+    rewards: ['탐험 지식'],
+  },
+];
+
+export const MOCK_MET_PEOPLE: MetPerson[] = [
+  {
+    id: 'person1',
     name: '엘드리치 장로',
     relationship: 75,
     maxRelationship: 100,
     lastMet: '오늘',
     description: '마법사 길드의 현명한 장로. 당신의 스승이자 멘토 역할을 합니다.',
+    location: '마법사 길드',
+    importance: 'main',
   },
   {
-    id: 'npc2',
+    id: 'person2',
     name: '리나 파이어스피어',
     relationship: 60,
     maxRelationship: 100,
     lastMet: '어제',
     description: '같은 학년의 엘리트 마법사. 경쟁 관계이지만 때로는 협력합니다.',
+    location: '마법학원',
+    importance: 'main',
   },
   {
-    id: 'npc3',
+    id: 'person3',
     name: '마스터 조르단',
     relationship: 45,
     maxRelationship: 100,
     lastMet: '3일 전',
     description: '마법 실습 담당 교수. 엄격하지만 학생들을 진심으로 아끼는 분입니다.',
+    location: '실습실',
+    importance: 'sub',
   },
 ];
 
-export const MOCK_DIALOGUE_HISTORY: DialogueRecord[] = [
+export const MOCK_STORY_FLOW: StoryNode[] = [
   {
-    id: 'dialogue1',
-    timestamp: '오늘 14:30',
-    npcName: '엘드리치 장로',
-    content: '아리아, 고대 마법서 해독 임무를 맡기겠다. 이는 쉬운 일이 아니지만, 너의 잠재력을 믿는다.',
-    playerChoice: '자신감을 가지고 임무를 받아들인다',
-    consequence: '에너지 -15, 동기부여 +10',
+    id: 'start',
+    title: '마법학원 입학',
+    type: 'story',
+    status: 'visited',
+    timestamp: '1일차',
+    choices: ['마법사 길드 가입', '독립 마법사 선택'],
+    consequences: ['길드 멤버십 획득', '자유로운 마법 연구'],
   },
   {
-    id: 'dialogue2',
-    timestamp: '어제 16:20',
-    npcName: '리나 파이어스피어',
-    content: '아리아, 마법 대결에서 너를 이길 수 있을까? 실력이 많이 늘었구나.',
-    playerChoice: '겸손하게 대답한다',
-    consequence: '스트레스 -5, 관계도 +5',
+    id: 'quest1',
+    title: '첫 번째 퀘스트',
+    type: 'choice',
+    status: 'visited',
+    timestamp: '3일차',
+    choices: ['고대 마법서 해독', '마법 재료 수집'],
+    consequences: ['지식 +10', '재료 +5'],
+  },
+  {
+    id: 'current',
+    title: '현재 진행 중',
+    type: 'story',
+    status: 'current',
+    timestamp: '45일차',
+    choices: ['계속 진행'],
   },
 ];
 

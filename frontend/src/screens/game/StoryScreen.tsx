@@ -23,10 +23,9 @@ import { ConsequenceType } from '../../types/game';
 import { 
   INITIAL_STORY_DATA, 
   INITIAL_CHARACTER_STATS,
-  MOCK_PLAYER_INFO,
-  MOCK_TASKS,
-  MOCK_NPCS,
-  MOCK_DIALOGUE_HISTORY,
+  MOCK_QUESTS,
+  MOCK_MET_PEOPLE,
+  MOCK_STORY_FLOW,
   MOCK_INVENTORY,
   MOCK_SKILLS,
   MOCK_COMPANIONS,
@@ -198,15 +197,31 @@ const StoryScreen = () => {
           </View>
         </View>
 
-        {/* Main Content */}
+        {/* Story Output Area */}
         <View style={styles.mainContent}>
-          {/* Narration */}
           <ScrollView 
-            style={styles.narrationContainer}
-            showsVerticalScrollIndicator={false}
+            style={styles.storyOutputContainer}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={styles.storyOutputContent}
           >
+            {/* Illustration Area */}
             <View style={[
-              styles.narrationCard,
+              styles.illustrationArea,
+              { backgroundColor: theme.colors.elevation1 }
+            ]}>
+              <Text style={[
+                styles.illustrationPlaceholder,
+                { 
+                  color: theme.colors.textSecondary,
+                  fontSize: theme.typography.sizes.md,
+                  fontWeight: theme.typography.weights.medium,
+                }
+              ]}>일러스트</Text>
+            </View>
+
+            {/* Text Output Area */}
+            <View style={[
+              styles.textOutputArea,
               { backgroundColor: theme.colors.elevation1 }
             ]}>
               <Text style={[
@@ -215,6 +230,7 @@ const StoryScreen = () => {
                   color: theme.colors.text,
                   fontSize: theme.typography.sizes.lg,
                   fontWeight: theme.typography.weights.regular,
+                  textAlign: 'left',
                 }
               ]}>{currentStory.content}</Text>
             </View>
@@ -423,10 +439,9 @@ const StoryScreen = () => {
         <GameInfoModal
           isVisible={isGameInfoModalVisible}
           onClose={() => setIsGameInfoModalVisible(false)}
-          playerInfo={MOCK_PLAYER_INFO}
-          tasks={MOCK_TASKS}
-          npcs={MOCK_NPCS}
-          dialogueHistory={MOCK_DIALOGUE_HISTORY}
+          quests={MOCK_QUESTS}
+          metPeople={MOCK_MET_PEOPLE}
+          storyFlow={MOCK_STORY_FLOW}
         />
       </View>
     </GlassmorphismBackground>
@@ -501,6 +516,47 @@ const getStyles = (theme: any, mode: string) => StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 16,
+  },
+  storyOutputContainer: {
+    flex: 1,
+  },
+  storyOutputContent: {
+    paddingBottom: 20,
+  },
+  illustrationArea: {
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 24,
+    minHeight: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  illustrationPlaceholder: {
+    textAlign: 'center',
+  },
+  textOutputArea: {
+    borderRadius: 16,
+    padding: 24,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   narrationContainer: {
     flex: 1,

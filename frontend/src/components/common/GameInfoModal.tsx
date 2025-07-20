@@ -4,18 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useTheme } from '../../theme/ThemeContext';
 
-interface PlayerInfo {
-  name: string;
-  daysPassed: number;
-  energy: number;
-  maxEnergy: number;
-  motivation: number;
-  maxMotivation: number;
-  stress: number;
-  maxStress: number;
-}
-
-interface Task {
+interface Quest {
   id: string;
   title: string;
   description: string;
@@ -23,48 +12,52 @@ interface Task {
   status: 'active' | 'completed' | 'failed';
   progress: number;
   maxProgress: number;
+  rewards?: string[];
 }
 
-interface NPC {
+
+
+interface MetPerson {
   id: string;
   name: string;
   relationship: number;
   maxRelationship: number;
   lastMet: string;
   description: string;
+  location: string;
+  importance: 'main' | 'sub' | 'background';
 }
 
-interface DialogueRecord {
+interface StoryNode {
   id: string;
+  title: string;
+  type: 'story' | 'choice' | 'consequence';
+  status: 'visited' | 'current' | 'locked';
   timestamp: string;
-  npcName: string;
-  content: string;
-  playerChoice: string;
-  consequence: string;
+  choices?: string[];
+  consequences?: string[];
 }
 
 interface GameInfoModalProps {
   isVisible: boolean;
   onClose: () => void;
-  playerInfo: PlayerInfo;
-  tasks: Task[];
-  npcs: NPC[];
-  dialogueHistory: DialogueRecord[];
+  quests: Quest[];
+  metPeople: MetPerson[];
+  storyFlow: StoryNode[];
 }
 
 const GameInfoModal: React.FC<GameInfoModalProps> = ({
   isVisible,
   onClose,
-  playerInfo,
-  tasks,
-  npcs,
-  dialogueHistory,
+  quests,
+  metPeople,
+  storyFlow,
 }) => {
   const { theme, mode } = useTheme();
 
   if (!isVisible) return null;
 
-  const getStatusColor = (status: string) => {
+  const getQuestStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
         return mode === 'dark' ? '#66BB6A' : '#4CAF50';
@@ -77,7 +70,7 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
     }
   };
 
-  const getStatusText = (status: string) => {
+  const getQuestStatusText = (status: string) => {
     switch (status) {
       case 'completed':
         return '완료';
@@ -87,6 +80,21 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
         return '실패';
       default:
         return '알 수 없음';
+    }
+  };
+
+
+
+  const getNodeStatusColor = (status: string) => {
+    switch (status) {
+      case 'visited':
+        return mode === 'dark' ? '#66BB6A' : '#4CAF50';
+      case 'current':
+        return mode === 'dark' ? '#42A5F5' : '#2196F3';
+      case 'locked':
+        return theme.colors.textSecondary;
+      default:
+        return theme.colors.textSecondary;
     }
   };
 
@@ -112,7 +120,7 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* 플레이어 정보 */}
+          {/* 퀘스트 */}
           <View style={styles.section}>
             <Text style={[
               styles.sectionTitle,
@@ -121,147 +129,43 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
                 fontSize: theme.typography.sizes.lg,
                 fontWeight: theme.typography.weights.semibold,
               }
-            ]}>플레이어 정보</Text>
-            <View style={[
-              styles.playerCard,
-              { backgroundColor: theme.colors.elevation1 }
-            ]}>
-              <Text style={[
-                styles.playerName,
-                { 
-                  color: theme.colors.text,
-                  fontSize: theme.typography.sizes.lg,
-                  fontWeight: theme.typography.weights.bold,
-                }
-              ]}>{playerInfo.name}</Text>
-              <Text style={[
-                styles.playerDays,
-                { 
-                  color: theme.colors.primary,
-                  fontSize: theme.typography.sizes.md,
-                  fontWeight: theme.typography.weights.medium,
-                }
-              ]}>{playerInfo.daysPassed}일차</Text>
-              
-              <View style={styles.statsContainer}>
-                <View style={styles.statItem}>
-                  <Text style={[
-                    styles.statLabel,
-                    { color: theme.colors.textSecondary }
-                  ]}>에너지</Text>
-                  <View style={[
-                    styles.statBar,
-                    { backgroundColor: theme.colors.elevation2 }
-                  ]}>
-                    <View style={[
-                      styles.statFill,
-                      { 
-                        backgroundColor: mode === 'dark' ? '#FFA726' : '#FF9800',
-                        width: `${(playerInfo.energy / playerInfo.maxEnergy) * 100}%`
-                      }
-                    ]} />
-                  </View>
-                  <Text style={[
-                    styles.statValue,
-                    { color: theme.colors.text }
-                  ]}>{playerInfo.energy}/{playerInfo.maxEnergy}</Text>
-                </View>
-                
-                <View style={styles.statItem}>
-                  <Text style={[
-                    styles.statLabel,
-                    { color: theme.colors.textSecondary }
-                  ]}>동기부여</Text>
-                  <View style={[
-                    styles.statBar,
-                    { backgroundColor: theme.colors.elevation2 }
-                  ]}>
-                    <View style={[
-                      styles.statFill,
-                      { 
-                        backgroundColor: mode === 'dark' ? '#66BB6A' : '#4CAF50',
-                        width: `${(playerInfo.motivation / playerInfo.maxMotivation) * 100}%`
-                      }
-                    ]} />
-                  </View>
-                  <Text style={[
-                    styles.statValue,
-                    { color: theme.colors.text }
-                  ]}>{playerInfo.motivation}/{playerInfo.maxMotivation}</Text>
-                </View>
-                
-                <View style={styles.statItem}>
-                  <Text style={[
-                    styles.statLabel,
-                    { color: theme.colors.textSecondary }
-                  ]}>스트레스</Text>
-                  <View style={[
-                    styles.statBar,
-                    { backgroundColor: theme.colors.elevation2 }
-                  ]}>
-                    <View style={[
-                      styles.statFill,
-                      { 
-                        backgroundColor: mode === 'dark' ? '#EF5350' : '#F44336',
-                        width: `${(playerInfo.stress / playerInfo.maxStress) * 100}%`
-                      }
-                    ]} />
-                  </View>
-                  <Text style={[
-                    styles.statValue,
-                    { color: theme.colors.text }
-                  ]}>{playerInfo.stress}/{playerInfo.maxStress}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* 임무 정보 */}
-          <View style={styles.section}>
-            <Text style={[
-              styles.sectionTitle,
-              { 
-                color: theme.colors.text,
-                fontSize: theme.typography.sizes.lg,
-                fontWeight: theme.typography.weights.semibold,
-              }
-            ]}>임무</Text>
-            <View style={styles.tasksContainer}>
-              {tasks.map((task) => (
-                <View key={task.id} style={[
-                  styles.taskCard,
+            ]}>퀘스트</Text>
+            <View style={styles.questsContainer}>
+              {quests.map((quest) => (
+                <View key={quest.id} style={[
+                  styles.questCard,
                   { backgroundColor: theme.colors.elevation1 }
                 ]}>
-                  <View style={styles.taskHeader}>
-                    <View style={styles.taskTypeContainer}>
+                  <View style={styles.questHeader}>
+                    <View style={styles.questTypeContainer}>
                       <Icon 
-                        name={task.type === 'main' ? 'flag' : 'flag-outline'} 
+                        name={quest.type === 'main' ? 'flag' : 'flag-outline'} 
                         size={16} 
                         color={theme.colors.primary} 
                       />
                       <Text style={[
-                        styles.taskType,
+                        styles.questType,
                         { color: theme.colors.primary }
                       ]}>
-                        {task.type === 'main' ? '메인' : '서브'}
+                        {quest.type === 'main' ? '메인 퀘스트' : '서브 퀘스트'}
                       </Text>
                     </View>
                     <Text style={[
-                      styles.taskStatus,
-                      { color: getStatusColor(task.status) }
+                      styles.questStatus,
+                      { color: getQuestStatusColor(quest.status) }
                     ]}>
-                      {getStatusText(task.status)}
+                      {getQuestStatusText(quest.status)}
                     </Text>
                   </View>
                   <Text style={[
-                    styles.taskTitle,
+                    styles.questTitle,
                     { color: theme.colors.text }
-                  ]}>{task.title}</Text>
+                  ]}>{quest.title}</Text>
                   <Text style={[
-                    styles.taskDescription,
+                    styles.questDescription,
                     { color: theme.colors.textSecondary }
-                  ]}>{task.description}</Text>
-                  {task.status === 'active' && (
+                  ]}>{quest.description}</Text>
+                  {quest.status === 'active' && (
                     <View style={styles.progressContainer}>
                       <View style={[
                         styles.progressBar,
@@ -271,7 +175,7 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
                           styles.progressFill,
                           { 
                             backgroundColor: theme.colors.primary,
-                            width: `${(task.progress / task.maxProgress) * 100}%`
+                            width: `${(quest.progress / quest.maxProgress) * 100}%`
                           }
                         ]} />
                       </View>
@@ -279,7 +183,7 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
                         styles.progressText,
                         { color: theme.colors.textSecondary }
                       ]}>
-                        {task.progress}/{task.maxProgress}
+                        {quest.progress}/{quest.maxProgress}
                       </Text>
                     </View>
                   )}
@@ -288,7 +192,9 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
             </View>
           </View>
 
-          {/* NPC 정보 */}
+
+
+          {/* 만난 사람들 */}
           <View style={styles.section}>
             <Text style={[
               styles.sectionTitle,
@@ -298,54 +204,60 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
                 fontWeight: theme.typography.weights.semibold,
               }
             ]}>만난 사람들</Text>
-            <View style={styles.npcsContainer}>
-              {npcs.map((npc) => (
-                <View key={npc.id} style={[
-                  styles.npcCard,
+            <View style={styles.metPeopleContainer}>
+              {metPeople.map((person) => (
+                <View key={person.id} style={[
+                  styles.personCard,
                   { backgroundColor: theme.colors.elevation1 }
                 ]}>
-                  <View style={styles.npcHeader}>
+                  <View style={styles.personHeader}>
                     <Text style={[
-                      styles.npcName,
+                      styles.personName,
                       { color: theme.colors.text }
-                    ]}>{npc.name}</Text>
+                    ]}>{person.name}</Text>
                     <Text style={[
-                      styles.npcLastMet,
+                      styles.personLastMet,
                       { color: theme.colors.textSecondary }
-                    ]}>{npc.lastMet}</Text>
+                    ]}>{person.lastMet}</Text>
                   </View>
                   <Text style={[
-                    styles.npcDescription,
+                    styles.personDescription,
                     { color: theme.colors.textSecondary }
-                  ]}>{npc.description}</Text>
-                  <View style={styles.relationshipContainer}>
+                  ]}>{person.description}</Text>
+                  <View style={styles.personInfo}>
                     <Text style={[
-                      styles.relationshipLabel,
+                      styles.personLocation,
                       { color: theme.colors.textSecondary }
-                    ]}>관계도</Text>
-                    <View style={[
-                      styles.relationshipBar,
-                      { backgroundColor: theme.colors.elevation2 }
-                    ]}>
+                    ]}>{person.location}</Text>
+                    <View style={styles.relationshipContainer}>
+                      <Text style={[
+                        styles.relationshipLabel,
+                        { color: theme.colors.textSecondary }
+                      ]}>관계도</Text>
                       <View style={[
-                        styles.relationshipFill,
-                        { 
-                          backgroundColor: mode === 'dark' ? '#66BB6A' : '#4CAF50',
-                          width: `${(npc.relationship / npc.maxRelationship) * 100}%`
-                        }
-                      ]} />
+                        styles.relationshipBar,
+                        { backgroundColor: theme.colors.elevation2 }
+                      ]}>
+                        <View style={[
+                          styles.relationshipFill,
+                          { 
+                            backgroundColor: mode === 'dark' ? '#66BB6A' : '#4CAF50',
+                            width: `${(person.relationship / person.maxRelationship) * 100}%`
+                          }
+                        ]} />
+                      </View>
+                      <Text style={[
+                        styles.relationshipValue,
+                        { color: theme.colors.text }
+                      ]}>{person.relationship}/{person.maxRelationship}</Text>
                     </View>
-                    <Text style={[
-                      styles.relationshipValue,
-                      { color: theme.colors.text }
-                    ]}>{npc.relationship}/{npc.maxRelationship}</Text>
                   </View>
                 </View>
               ))}
             </View>
           </View>
 
-          {/* 대화 기록 */}
+          {/* 흐름도 */}
           <View style={styles.section}>
             <Text style={[
               styles.sectionTitle,
@@ -354,48 +266,48 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
                 fontSize: theme.typography.sizes.lg,
                 fontWeight: theme.typography.weights.semibold,
               }
-            ]}>대화 기록</Text>
-            <View style={styles.dialogueContainer}>
-              {dialogueHistory.map((dialogue) => (
-                <View key={dialogue.id} style={[
-                  styles.dialogueCard,
-                  { backgroundColor: theme.colors.elevation1 }
-                ]}>
-                  <View style={styles.dialogueHeader}>
-                    <Text style={[
-                      styles.dialogueNpc,
-                      { color: theme.colors.primary }
-                    ]}>{dialogue.npcName}</Text>
-                    <Text style={[
-                      styles.dialogueTime,
-                      { color: theme.colors.textSecondary }
-                    ]}>{dialogue.timestamp}</Text>
-                  </View>
-                  <Text style={[
-                    styles.dialogueContent,
-                    { color: theme.colors.text }
-                  ]}>{dialogue.content}</Text>
-                  <View style={styles.choiceContainer}>
-                    <Text style={[
-                      styles.choiceLabel,
-                      { color: theme.colors.textSecondary }
-                    ]}>내 선택:</Text>
-                    <Text style={[
-                      styles.choiceText,
-                      { color: theme.colors.text }
-                    ]}>{dialogue.playerChoice}</Text>
-                  </View>
-                  {dialogue.consequence && (
-                    <View style={styles.consequenceContainer}>
+            ]}>흐름도</Text>
+            <View style={styles.storyFlowContainer}>
+              {storyFlow.map((node, index) => (
+                <View key={node.id} style={styles.storyNodeContainer}>
+                  <View style={[
+                    styles.storyNode,
+                    { backgroundColor: theme.colors.elevation1 }
+                  ]}>
+                    <View style={styles.nodeHeader}>
+                      <Icon 
+                        name={node.type === 'story' ? 'book-open' : node.type === 'choice' ? 'help-circle' : 'lightning-bolt'} 
+                        size={16} 
+                        color={getNodeStatusColor(node.status)} 
+                      />
                       <Text style={[
-                        styles.consequenceLabel,
+                        styles.nodeTitle,
+                        { 
+                          color: getNodeStatusColor(node.status),
+                          fontWeight: node.status === 'current' ? theme.typography.weights.semibold : '400',
+                        }
+                      ]}>{node.title}</Text>
+                      <Text style={[
+                        styles.nodeTime,
                         { color: theme.colors.textSecondary }
-                      ]}>결과:</Text>
-                      <Text style={[
-                        styles.consequenceText,
-                        { color: mode === 'dark' ? '#66BB6A' : '#4CAF50' }
-                      ]}>{dialogue.consequence}</Text>
+                      ]}>{node.timestamp}</Text>
                     </View>
+                    {node.choices && node.choices.length > 0 && (
+                      <View style={styles.nodeChoices}>
+                        {node.choices.map((choice, choiceIndex) => (
+                          <Text key={choiceIndex} style={[
+                            styles.nodeChoice,
+                            { color: theme.colors.textSecondary }
+                          ]}>• {choice}</Text>
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                  {index < storyFlow.length - 1 && (
+                    <View style={[
+                      styles.nodeConnector,
+                      { backgroundColor: theme.colors.elevation2 }
+                    ]} />
                   )}
                 </View>
               ))}
@@ -407,6 +319,7 @@ const GameInfoModal: React.FC<GameInfoModalProps> = ({
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
@@ -430,11 +343,11 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     bottom: 50,
-    borderRadius: 16,
+    borderRadius: 20,
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.3,
         shadowRadius: 12,
       },
       android: {
@@ -447,8 +360,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
@@ -463,89 +375,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   section: {
-    marginBottom: 24,
+    marginTop: 20,
   },
   sectionTitle: {
     marginBottom: 12,
     letterSpacing: -0.3,
   },
-  playerCard: {
+  questsContainer: {
+    gap: 12,
+  },
+  questCard: {
     borderRadius: 12,
     padding: 16,
   },
-  playerName: {
-    marginBottom: 4,
-    letterSpacing: -0.2,
-  },
-  playerDays: {
-    marginBottom: 16,
-    letterSpacing: -0.2,
-  },
-  statsContainer: {
-    gap: 12,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statLabel: {
-    minWidth: 60,
-    fontSize: 14,
-    letterSpacing: -0.2,
-  },
-  statBar: {
-    flex: 1,
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginHorizontal: 12,
-  },
-  statFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  statValue: {
-    minWidth: 50,
-    textAlign: 'right',
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: -0.1,
-  },
-  tasksContainer: {
-    gap: 12,
-  },
-  taskCard: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  taskHeader: {
+  questHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
-  taskTypeContainer: {
+  questTypeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  taskType: {
+  questType: {
     marginLeft: 6,
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: -0.1,
   },
-  taskStatus: {
+  questStatus: {
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: -0.1,
   },
-  taskTitle: {
+  questTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
     letterSpacing: -0.2,
   },
-  taskDescription: {
+  questDescription: {
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
@@ -571,33 +441,41 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: -0.1,
   },
-  npcsContainer: {
+
+  metPeopleContainer: {
     gap: 12,
   },
-  npcCard: {
+  personCard: {
     borderRadius: 12,
     padding: 16,
   },
-  npcHeader: {
+  personHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
-  npcName: {
+  personName: {
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: -0.2,
   },
-  npcLastMet: {
+  personLastMet: {
     fontSize: 12,
     letterSpacing: -0.1,
   },
-  npcDescription: {
+  personDescription: {
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
     letterSpacing: -0.2,
+  },
+  personInfo: {
+    gap: 8,
+  },
+  personLocation: {
+    fontSize: 12,
+    letterSpacing: -0.1,
   },
   relationshipContainer: {
     flexDirection: 'row',
@@ -626,62 +504,45 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: -0.1,
   },
-  dialogueContainer: {
-    gap: 12,
+  storyFlowContainer: {
+    gap: 8,
   },
-  dialogueCard: {
+  storyNodeContainer: {
+    alignItems: 'center',
+  },
+  storyNode: {
+    width: '100%',
     borderRadius: 12,
     padding: 16,
   },
-  dialogueHeader: {
+  nodeHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
-  dialogueNpc: {
-    fontSize: 16,
-    fontWeight: '600',
+  nodeTitle: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
     letterSpacing: -0.2,
   },
-  dialogueTime: {
+  nodeTime: {
     fontSize: 12,
     letterSpacing: -0.1,
   },
-  dialogueContent: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 12,
-    letterSpacing: -0.2,
+  nodeChoices: {
+    marginTop: 8,
   },
-  choiceContainer: {
-    marginBottom: 8,
-  },
-  choiceLabel: {
+  nodeChoice: {
     fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 4,
+    lineHeight: 16,
+    marginBottom: 2,
     letterSpacing: -0.1,
   },
-  choiceText: {
-    fontSize: 14,
-    fontStyle: 'italic',
-    letterSpacing: -0.2,
-  },
-  consequenceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  consequenceLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginRight: 8,
-    letterSpacing: -0.1,
-  },
-  consequenceText: {
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: -0.2,
+  nodeConnector: {
+    width: 2,
+    height: 16,
+    marginVertical: 4,
   },
 });
 

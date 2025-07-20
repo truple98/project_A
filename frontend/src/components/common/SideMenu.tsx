@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 24,
     borderBottomWidth: 1,
   },
   menuItemContent: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuIcon: {
-    marginRight: 16,
+    marginRight: 20,
   },
   menuItemText: {
     letterSpacing: -0.2,

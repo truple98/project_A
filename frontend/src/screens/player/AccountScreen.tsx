@@ -80,6 +80,14 @@ const AccountScreen = () => {
     console.log('이용 약관');
   }, []);
 
+  const handleAchievement = useCallback(() => {
+    (navigation as any).navigate('Achievement');
+  }, [navigation]);
+
+  const handleHistory = useCallback(() => {
+    navigation.navigate('History');
+  }, [navigation]);
+
   // 5.3 Styles
   const styles = StyleSheet.create({
     container: {
@@ -312,6 +320,59 @@ const AccountScreen = () => {
                 </Text>
                 <Text style={[styles.menuSubtitle, { color: theme.colors.textSecondary }]}>
                   앱 내에서 구매한 상품들을 확인하세요
+                </Text>
+              </View>
+              <Icon 
+                name="chevron-right" 
+                size={20} 
+                color={theme.colors.textSecondary}
+                style={styles.menuArrow}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* 게임 기록 */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>게임 기록</Text>
+            
+            {/* 업적 */}
+            <TouchableOpacity 
+              style={[styles.menuItem, { backgroundColor: theme.colors.surface }]}
+              onPress={handleAchievement}
+            >
+              <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="trophy" size={24} color={theme.colors.text} />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={[styles.menuTitle, { color: theme.colors.text }]}>
+                  업적
+                </Text>
+                <Text style={[styles.menuSubtitle, { color: theme.colors.textSecondary }]}>
+                  달성한 업적들을 확인하세요
+                </Text>
+              </View>
+              <Icon 
+                name="chevron-right" 
+                size={20} 
+                color={theme.colors.textSecondary}
+                style={styles.menuArrow}
+              />
+            </TouchableOpacity>
+
+            {/* 기록 */}
+            <TouchableOpacity 
+              style={[styles.menuItem, { backgroundColor: theme.colors.surface }]}
+              onPress={handleHistory}
+            >
+              <View style={[styles.menuIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="history" size={24} color={theme.colors.text} />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={[styles.menuTitle, { color: theme.colors.text }]}>
+                  기록
+                </Text>
+                <Text style={[styles.menuSubtitle, { color: theme.colors.textSecondary }]}>
+                  플레이 기록을 확인하세요
                 </Text>
               </View>
               <Icon 

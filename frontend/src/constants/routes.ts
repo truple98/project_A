@@ -32,13 +32,11 @@ export const ROUTES = {
     SPLASH: 'Splash',
     WELCOME: 'Welcome', 
     LOGIN: 'Login',
-    REGISTER: 'Register',
   },
   
   // 🎮 Main Game Flow
   MAIN: {
     HOME: 'Home',
-    GAME_START: 'GameStart',
     STORY: 'Story',
     RESULT: 'Result',
     ENDING: 'Ending',
@@ -89,7 +87,6 @@ export const API_ROUTES = {
   // 🎮 Game Session Management
   GAME: {
     SESSION: '/game/session',
-    START: '/game/start',
     CHOICE: '/game/choice',
     SAVE: '/game/save',
     LOAD: '/game/load',

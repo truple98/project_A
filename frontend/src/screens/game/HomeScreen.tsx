@@ -51,28 +51,36 @@ const HomeScreen = () => {
   }, [navigation]);
 
   const handleStartNewGame = useCallback(() => {
-    navigation.navigate('GameStart');
+    navigation.navigate('Story', { nodeId: 'start' });
   }, [navigation]);
 
   const handleOpenSettings = useCallback(() => {
     navigation.navigate('Settings');
   }, [navigation]);
 
-  const handleOpenAchievement = useCallback(() => {
-    (navigation as any).navigate('Achievement');
-  }, [navigation]);
-
-  const handleOpenHistory = useCallback(() => {
-    navigation.navigate('History');
+  const handleOpenEncyclopedia = useCallback(() => {
+    (navigation as any).navigate('Encyclopedia');
   }, [navigation]);
 
   const handleOpenStore = useCallback(() => {
     (navigation as any).navigate('Store');
   }, [navigation]);
 
+  const handleOpenChapter = useCallback(() => {
+    (navigation as any).navigate('Chapter');
+  }, [navigation]);
+
   const handleOpenMyPage = useCallback(() => {
     navigation.navigate('Account');
   }, [navigation]);
+
+
+
+
+
+
+
+
 
   // 5.3. 스타일 정의 (theme 객체 활용)
   const styles = StyleSheet.create({
@@ -300,7 +308,9 @@ const HomeScreen = () => {
       fontWeight: '600',
       letterSpacing: -0.2,
     },
-    footer: {
+
+
+    bottomNav: {
       position: 'absolute',
       bottom: 0,
       left: 0,
@@ -311,17 +321,17 @@ const HomeScreen = () => {
       paddingBottom: 32,
       paddingTop: 20,
     },
-    footerContent: {
+    bottomNavContent: {
       flexDirection: 'row',
       justifyContent: 'space-around',
       alignItems: 'center',
       paddingHorizontal: 24,
     },
-    footerItem: {
+    bottomNavItem: {
       alignItems: 'center',
       flex: 1,
     },
-    footerIcon: {
+    bottomNavIcon: {
       width: 48,
       height: 48,
       borderRadius: 24,
@@ -329,7 +339,7 @@ const HomeScreen = () => {
       alignItems: 'center',
       marginBottom: 4,
     },
-    footerText: {
+    bottomNavText: {
       fontSize: 12,
       fontWeight: '500',
       letterSpacing: -0.1,
@@ -504,6 +514,8 @@ const HomeScreen = () => {
             </GlassmorphismCard>
           )}
 
+
+
           {/* 새로운 모험 시작하기 버튼 */}
           <TouchableOpacity
             style={[
@@ -517,40 +529,42 @@ const HomeScreen = () => {
               새로운 모험 시작하기
             </Text>
           </TouchableOpacity>
+
         </View>
 
-        {/* 푸터 네비게이션 */}
-        <View style={[styles.footer, { backgroundColor: theme.colors.surface }]}>
-          <View style={styles.footerContent}>
-            <TouchableOpacity style={styles.footerItem} onPress={handleOpenAchievement}>
-              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
-                <Icon name="trophy" size={24} color={theme.colors.text} />
+        {/* 하단 네비게이션 바 */}
+        <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface }]}>
+          <View style={styles.bottomNavContent}>
+            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenEncyclopedia}>
+              <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="book-open-variant" size={24} color={theme.colors.text} />
               </View>
-              <Text style={[styles.footerText, { color: theme.colors.text }]}>업적</Text>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>도감</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.footerItem} onPress={handleOpenHistory}>
-              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
-                <Icon name="history" size={24} color={theme.colors.text} />
-              </View>
-              <Text style={[styles.footerText, { color: theme.colors.text }]}>기록</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.footerItem} onPress={handleOpenStore}>
-              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenStore}>
+              <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
                 <Icon name="store" size={24} color={theme.colors.text} />
               </View>
-              <Text style={[styles.footerText, { color: theme.colors.text }]}>스토어</Text>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>스토어</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.footerItem} onPress={handleOpenMyPage}>
-              <View style={[styles.footerIcon, { backgroundColor: theme.colors.elevated }]}>
+            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenChapter}>
+              <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
+                <Icon name="bookmark-multiple" size={24} color={theme.colors.text} />
+              </View>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>챕터</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenMyPage}>
+              <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
                 <Icon name="account-outline" size={24} color={theme.colors.text} />
               </View>
-              <Text style={[styles.footerText, { color: theme.colors.text }]}>마이페이지</Text>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>마이페이지</Text>
             </TouchableOpacity>
           </View>
         </View>
+
       </View>
     </GlassmorphismBackground>
   );

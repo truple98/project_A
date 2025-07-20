@@ -33,11 +33,12 @@ export type RootStackParamList = {
   Splash: undefined;
   Welcome: undefined;
   Login: undefined;
-  Register: undefined;
   
   // 메인 게임 스크린
   Home: undefined;
-  GameStart: undefined;
+  
+  // 메인 탭 네비게이션
+  MainTabs: undefined;
   
   // 스토리 관련 스크린
   Story: { 
@@ -63,6 +64,25 @@ export type RootStackParamList = {
     category?: 'places' | 'characters' | 'creatures' | 'companions' | 'tools' | 'status' | 'skills';
   };
   
+  // 도감 하위 스크린들
+  LocationEncyclopedia: undefined;
+  CharacterEncyclopedia: undefined;
+  CreatureEncyclopedia: undefined;
+  CompanionEncyclopedia: undefined;
+  ItemEncyclopedia: undefined;
+  StatusEncyclopedia: undefined;
+  SkillEncyclopedia: undefined;
+  EndingEncyclopedia: undefined;
+  EndingDetail: {
+    endingId: string;
+  };
+  
+  // 챕터 스크린
+  Chapter: undefined;
+  ChapterDetail: {
+    storyId: string;
+  };
+  
   // 게임 기록 관련 스크린
   History: {
     sortBy?: 'date' | 'score' | 'duration';
@@ -74,20 +94,25 @@ export type RootStackParamList = {
     showComparison?: boolean;
   };
   
-  // 상태 스크린
-  
-  Status: {
-    tab?: 'stats' | 'traits' | 'achievements';
-  };
+
   
   // 설정 관련 스크린
   Settings: {
     section?: 'general' | 'gameplay' | 'audio' | 'display' | 'account';
   };
   
+  // 설정 하위 화면들
+  ThemeSettings: undefined;
+  LanguageSettings: undefined;
+  TermsOfService: undefined;
+  AppInfo: undefined;
+  
   Account: undefined;
   Achievement: undefined;
   Store: undefined;
+  StoreDetail: {
+    storyId: string;
+  };
   VersionInfo: undefined;
   Help: {
     topic?: 'gameplay' | 'controls' | 'troubleshooting' | 'contact';
@@ -159,10 +184,7 @@ export interface RecordDetailScreenProps extends BaseScreenProps<'RecordDetail'>
 
 
 
-/**
- * 상태 스크린 Props
- */
-export interface StatusScreenProps extends BaseScreenProps<'Status'> {}
+
 
 /**
  * 설정 스크린 Props
