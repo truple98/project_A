@@ -180,6 +180,8 @@ buck-out/
 .expo/
 dist/
 web-build/
+android/
+ios/
 
 # ===== Database =====
 
