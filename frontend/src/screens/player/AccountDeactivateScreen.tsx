@@ -40,18 +40,7 @@ const AccountDeactivateScreen: React.FC = () => {
   // 최종 확인 모달: 취소
   const handleCancelDeactivate = useCallback(() => setShowConfirmModal(false), []);
 
-  useEffect(() => {
-    if (showSuccessModal) {
-      const timer = setTimeout(() => {
-        setShowSuccessModal(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: ROUTES.APP.TITLE as any }],
-        });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showSuccessModal, navigation]);
+  // useEffect 제거 (showSuccessModal, navigation)
 
   const styles = useMemo(() => StyleSheet.create({
     container: {

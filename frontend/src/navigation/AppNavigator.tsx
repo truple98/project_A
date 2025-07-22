@@ -129,7 +129,7 @@ const AppNavigator: React.FC = () => {
   const renderAuthScreens = (): React.ReactElement[] => [
     <Stack.Screen 
       key={ROUTES.APP.TITLE}
-      name={ROUTES.APP.TITLE}
+      name={ROUTES.APP.TITLE as any}
       component={TitleScreen}
     />, 
     <Stack.Screen 
@@ -183,7 +183,7 @@ const AppNavigator: React.FC = () => {
     />,
     <Stack.Screen 
       key={ROUTES.SETTINGS.ACCOUNT_DEACTIVATE}
-      name={ROUTES.SETTINGS.ACCOUNT_DEACTIVATE}
+      name={ROUTES.SETTINGS.ACCOUNT_DEACTIVATE as any}
       component={AccountDeactivateScreen}
     />,
     
