@@ -32,7 +32,7 @@ import { useSelector } from 'react-redux';
 // 4. 프로젝트 내부 - 스크린 컴포넌트들
 // ========================================
 // 🔐 Authentication Screens
-import WelcomeScreen from '../screens/auth/WelcomeScreen';
+import TitleScreen from '../screens/app/TitleScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 
 // 🎮 Game Flow Screens  
@@ -40,12 +40,14 @@ import HomeScreen from '../screens/game/HomeScreen';
 import StoryScreen from '../screens/game/StoryScreen';
 import ResultScreen from '../screens/game/ResultScreen';
 import EndingScreen from '../screens/game/EndingScreen';
-import ChapterScreen from '../screens/game/ChapterScreen';
-import ChapterDetailScreen from '../screens/game/ChapterDetailScreen';
+import LibraryScreen from '../screens/game/LibraryScreen';
+import LibraryDetailScreen from '../screens/game/LibraryDetailScreen';
 
 // 👤 Character & Progress Screens
 import HistoryScreen from '../screens/player/HistoryScreen';
 import AccountScreen from '../screens/player/AccountScreen';
+import PurchasedItemsScreen from '../screens/player/PurchasedItemsScreen';
+import AccountDeactivateScreen from '../screens/player/AccountDeactivateScreen';
 
 // ⚙️ Utility & Settings Screens
 import SettingsScreen from '../screens/utility/SettingsScreen';
@@ -126,14 +128,14 @@ const AppNavigator: React.FC = () => {
    */
   const renderAuthScreens = (): React.ReactElement[] => [
     <Stack.Screen 
-      key={ROUTES.AUTH.WELCOME}
-      name={ROUTES.AUTH.WELCOME} 
-      component={WelcomeScreen} 
-    />,
+      key={ROUTES.APP.TITLE}
+      name={ROUTES.APP.TITLE}
+      component={TitleScreen}
+    />, 
     <Stack.Screen 
       key={ROUTES.AUTH.LOGIN}
-      name={ROUTES.AUTH.LOGIN} 
-      component={LoginScreen} 
+      name={ROUTES.AUTH.LOGIN}
+      component={LoginScreen}
     />,
   ];
 
@@ -170,9 +172,19 @@ const AppNavigator: React.FC = () => {
       component={AccountScreen} 
     />,
     <Stack.Screen 
+      key="PurchasedItems"
+      name={"PurchasedItems" as any} 
+      component={PurchasedItemsScreen} 
+    />,
+    <Stack.Screen 
       key={ROUTES.CHARACTER.HISTORY}
       name={ROUTES.CHARACTER.HISTORY} 
       component={HistoryScreen} 
+    />,
+    <Stack.Screen 
+      key={ROUTES.SETTINGS.ACCOUNT_DEACTIVATE}
+      name={ROUTES.SETTINGS.ACCOUNT_DEACTIVATE}
+      component={AccountDeactivateScreen}
     />,
     
     // 📚 도감 및 스토어 스크린들
@@ -192,14 +204,14 @@ const AppNavigator: React.FC = () => {
       component={StoreDetailScreen} 
     />,
     <Stack.Screen 
-      key="Chapter"
-      name={"Chapter" as any} 
-      component={ChapterScreen} 
+      key="Library"
+      name={"Library" as any} 
+      component={LibraryScreen} 
     />,
     <Stack.Screen 
-      key="ChapterDetail"
-      name={"ChapterDetail" as any} 
-      component={ChapterDetailScreen} 
+      key="LibraryDetail"
+      name={"LibraryDetail" as any} 
+      component={LibraryDetailScreen} 
     />,
     
     // 📚 도감 상세 페이지들

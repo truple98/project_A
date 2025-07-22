@@ -27,13 +27,15 @@
  * ```
  */
 export const ROUTES = {
+  // 🏠 App Flow
+  APP: {
+    TITLE: 'Title',
+    LOADING: 'Loading',
+  },
   // 🔐 Authentication Flow
   AUTH: {
-    SPLASH: 'Splash',
-    WELCOME: 'Welcome', 
     LOGIN: 'Login',
   },
-  
   // 🎮 Main Game Flow
   MAIN: {
     HOME: 'Home',
@@ -41,7 +43,6 @@ export const ROUTES = {
     RESULT: 'Result',
     ENDING: 'Ending',
   },
-  
   // 👤 Character & Progress Management
   CHARACTER: {
     OVERVIEW: 'Character',
@@ -49,11 +50,11 @@ export const ROUTES = {
     RECORD_DETAIL: 'RecordDetail',
     STATUS: 'Status',
   },
-  
   // ⚙️ Settings & Account
   SETTINGS: {
     MAIN: 'Settings',
     ACCOUNT: 'Account',
+    ACCOUNT_DEACTIVATE: 'AccountDeactivate',
     ACHIEVEMENT: 'Achievement',
     STORE: 'Store',
     VERSION_INFO: 'VersionInfo',

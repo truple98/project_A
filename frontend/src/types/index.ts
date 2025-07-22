@@ -210,6 +210,8 @@ export type RootStackParamList = {
   Account: undefined;
   VersionInfo: undefined;
   Help: undefined;
+  Library: undefined;
+  LibraryDetail: { storyId: string };
 };
 
 // ========================================

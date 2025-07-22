@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // 2. 내부 컴포넌트 및 유틸리티 임포트 (알파벳 순서)
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
 
@@ -66,8 +67,8 @@ const HomeScreen = () => {
     (navigation as any).navigate('Store');
   }, [navigation]);
 
-  const handleOpenChapter = useCallback(() => {
-    (navigation as any).navigate('Chapter');
+  const handleOpenLibrary = useCallback(() => {
+    (navigation as any).navigate('Library');
   }, [navigation]);
 
   const handleOpenMyPage = useCallback(() => {
@@ -86,23 +87,6 @@ const HomeScreen = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-    },
-    header: {
-      paddingTop: 80,
-      paddingBottom: 32,
-      paddingHorizontal: 24,
-      marginHorizontal: 24,
-      marginTop: 24,
-    },
-    headerContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    username: {
-      fontSize: 28,
-      fontWeight: '700',
-      letterSpacing: -0.5,
     },
     settingsButton: {
       width: 48,
@@ -166,10 +150,9 @@ const HomeScreen = () => {
       letterSpacing: 0.5,
     },
     currentGameChapter: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: '600',
-      marginBottom: 12,
-      letterSpacing: -0.2,
+      marginBottom: 8,
     },
     progressContainer: {
       marginBottom: 16,
@@ -350,24 +333,18 @@ const HomeScreen = () => {
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <View style={styles.headerContent}>
-            <Text style={[styles.username, { color: theme.colors.text }]}>
-              모험가님
-            </Text>
+        <GlassmorphismHeader 
+          title="모험가님"
+          showBackButton={false}
+          rightComponent={
             <TouchableOpacity 
-              style={[styles.settingsButton, { backgroundColor: theme.colors.surface }]}
+              style={styles.settingsButton}
               onPress={handleOpenSettings}
             >
-              <Icon
-                name="cog-outline"
-                size={20}
-                color={theme.colors.text}
-              />
+              <Icon name="cog" size={24} color={theme.colors.text} />
             </TouchableOpacity>
-          </View>
-        </GlassmorphismCard>
+          }
+        />
 
         {/* 메인 콘텐츠 */}
         <View style={styles.mainContent}>
@@ -549,18 +526,18 @@ const HomeScreen = () => {
               <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>스토어</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenChapter}>
+            <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenLibrary}>
               <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
                 <Icon name="bookmark-multiple" size={24} color={theme.colors.text} />
               </View>
-              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>챕터</Text>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>서재</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.bottomNavItem} onPress={handleOpenMyPage}>
               <View style={[styles.bottomNavIcon, { backgroundColor: theme.colors.elevated }]}>
                 <Icon name="account-outline" size={24} color={theme.colors.text} />
               </View>
-              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>마이페이지</Text>
+              <Text style={[styles.bottomNavText, { color: theme.colors.text }]}>내 정보</Text>
             </TouchableOpacity>
           </View>
         </View>

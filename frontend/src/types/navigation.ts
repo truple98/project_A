@@ -29,9 +29,10 @@ import type { ChoiceConsequence } from './game';
  * 앱의 모든 스크린과 그에 필요한 파라미터를 정의합니다.
  */
 export type RootStackParamList = {
+  // 앱 루트 스크린
+  Title: undefined;
+  Loading: undefined;
   // 인증 관련 스크린
-  Splash: undefined;
-  Welcome: undefined;
   Login: undefined;
   
   // 메인 게임 스크린
@@ -77,9 +78,9 @@ export type RootStackParamList = {
     endingId: string;
   };
   
-  // 챕터 스크린
-  Chapter: undefined;
-  ChapterDetail: {
+  // 서재 스크린
+  Library: undefined;
+  LibraryDetail: {
     storyId: string;
   };
   
@@ -96,6 +97,18 @@ export type RootStackParamList = {
   
 
   
+  // 계정 관련 스크린
+  Account: undefined;
+  Achievement: undefined;
+  PurchasedItems: undefined;
+  AccountDeactivate: undefined;
+  
+  // 스토어 관련 스크린
+  Store: undefined;
+  StoreDetail: {
+    storyId: string;
+  };
+  
   // 설정 관련 스크린
   Settings: {
     section?: 'general' | 'gameplay' | 'audio' | 'display' | 'account';
@@ -107,12 +120,6 @@ export type RootStackParamList = {
   TermsOfService: undefined;
   AppInfo: undefined;
   
-  Account: undefined;
-  Achievement: undefined;
-  Store: undefined;
-  StoreDetail: {
-    storyId: string;
-  };
   VersionInfo: undefined;
   Help: {
     topic?: 'gameplay' | 'controls' | 'troubleshooting' | 'contact';

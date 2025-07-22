@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -9,9 +9,10 @@ import { useTheme } from '../../theme/ThemeContext';
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
 import FadeDivider from '../../components/FadeDivider';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 import { RootStackParamList } from '../../types';
 
-type LanguageSettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'LanguageSettings'>;
+type LanguageSettingsScreenNavigationProp = StackNavigationProp<any, any>;
 
 interface LanguageOption {
   id: string;
@@ -73,7 +74,7 @@ const LANGUAGE_OPTIONS: LanguageOption[] = [
   },
 ];
 
-const LanguageSettingsScreen = () => {
+const LanguageSettingsScreen: React.FC = () => {
   const navigation = useNavigation<LanguageSettingsScreenNavigationProp>();
   const { theme } = useTheme();
   const [selectedLanguage, setSelectedLanguage] = useState('ko');
@@ -89,25 +90,90 @@ const LanguageSettingsScreen = () => {
     console.log(`언어가 ${languageOption?.name}로 변경되었습니다.`);
   }, []);
 
+  // 스타일 정의 (useMemo로 캐싱)
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+      paddingTop: 20,
+    },
+    languageCard: {
+      paddingVertical: 8,
+    },
+    languageItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    languageLeft: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    languageIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    flagText: {
+      fontSize: 24,
+    },
+    languageInfo: {
+      flex: 1,
+    },
+    languageNameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    languageName: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginRight: 8,
+    },
+    systemBadge: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 8,
+    },
+    systemText: {
+      fontSize: 10,
+      fontWeight: '700',
+    },
+    languageNativeName: {
+      fontSize: 13,
+      fontWeight: '400',
+    },
+    languageRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    selectedIndicator: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  }), [theme]);
+
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleGoBack}
-          >
-            <Text style={[styles.backButtonText, { color: theme.colors.text }]}>←</Text>
-          </TouchableOpacity>
-          
-          <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>언어 설정</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>
-              원하는 언어를 선택하세요
-            </Text>
-          </View>
-        </GlassmorphismCard>
+        <GlassmorphismHeader 
+          title="언어 설정" 
+          subtitle="원하는 언어를 선택하세요"
+          onBackPress={handleGoBack}
+        />
 
         <ScrollView 
           contentContainerStyle={styles.scrollContent}
@@ -164,113 +230,5 @@ const LanguageSettingsScreen = () => {
     </GlassmorphismBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    paddingTop: 60,
-    marginHorizontal: 20,
-    marginTop: 10,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  headerTitleContainer: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  headerSubtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    fontWeight: '400',
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    paddingTop: 20,
-  },
-  languageCard: {
-    paddingVertical: 8,
-  },
-  languageItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  languageLeft: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  languageIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  flagText: {
-    fontSize: 24,
-  },
-  languageInfo: {
-    flex: 1,
-  },
-  languageNameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  languageName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginRight: 8,
-  },
-  systemBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  systemText: {
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  languageNativeName: {
-    fontSize: 13,
-    fontWeight: '400',
-  },
-  languageRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  selectedIndicator: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default LanguageSettingsScreen; 

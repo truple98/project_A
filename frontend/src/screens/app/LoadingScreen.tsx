@@ -6,10 +6,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 
 // 2. Internal imports
-import GlassmorphismBackground from '../components/GlassmorphismBackground';
-import { RootState } from '../store';
-import { useTheme } from '../theme/ThemeContext';
-import { RootStackParamList } from '../types';
+import GlassmorphismBackground from '../../components/GlassmorphismBackground';
+import { RootState } from '../../store';
+import { useTheme } from '../../theme/ThemeContext';
+import { RootStackParamList } from '../../types';
 
 // 3. Types
 type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splash'>;
@@ -46,7 +46,7 @@ const SplashScreen = () => {
               project_A
             </Text>
             <Text style={[styles.appSubtitle, { color: theme.colors.textSecondary }]}>
-              텍스트 기반 RPG 게임
+              Binary Studio
             </Text>
           </View>
           

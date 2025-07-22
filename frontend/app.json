@@ -16,20 +16,20 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.trpggame.app"
+      "bundleIdentifier": "com.project_A.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.trpggame.app"
+      "package": "com.project_A.app"
     },
     "web": {
       "favicon": "./src/assets/favicon.png",
       "bundler": "metro"
     },
-    "scheme": "trpg-game",
+    "scheme": "project_A",
     "extra": {
       "eas": {
         "projectId": "dd2512ce-e071-4d10-8cf0-40faeb5a30c9"

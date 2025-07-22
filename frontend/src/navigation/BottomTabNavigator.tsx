@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import EncyclopediaScreen from '../screens/utility/encyclopedia/EncyclopediaScreen';
 import StoreScreen from '../screens/utility/StoreScreen';
-import ChapterScreen from '../screens/game/ChapterScreen';
+import LibraryScreen from '../screens/game/LibraryScreen';
 import AccountScreen from '../screens/player/AccountScreen';
 import { useTheme } from '../theme/ThemeContext';
 
@@ -27,8 +27,8 @@ const BottomTabNavigator = () => {
             case 'Store':
               iconName = 'store';
               break;
-            case 'Chapter':
-              iconName = 'bookmark-multiple';
+            case 'Library':
+              iconName = 'book-open-variant';
               break;
             case 'Account':
               iconName = 'account';
@@ -77,14 +77,14 @@ const BottomTabNavigator = () => {
         options={{ tabBarLabel: '스토어' }}
       />
       <Tab.Screen 
-        name="Chapter" 
-        component={ChapterScreen}
-        options={{ tabBarLabel: '챕터' }}
+        name="Library" 
+        component={LibraryScreen}
+        options={{ tabBarLabel: '서재' }}
       />
       <Tab.Screen 
         name="Account" 
         component={AccountScreen}
-        options={{ tabBarLabel: '마이페이지' }}
+        options={{ tabBarLabel: '내 정보' }}
       />
     </Tab.Navigator>
   );

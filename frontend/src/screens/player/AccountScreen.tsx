@@ -1,6 +1,6 @@
 // 1. React/External imports
-import React, { useCallback } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -9,8 +9,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // 2. Internal imports
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 import { useTheme } from '../../theme/ThemeContext';
 import { RootStackParamList } from '../../types';
+import { ROUTES } from '../../constants/routes';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/slices/authSlice';
 
 // 3. Type definitions
 interface UserInfo {
@@ -34,6 +38,8 @@ const AccountScreen = () => {
   // 5.1 Hooks
   const navigation = useNavigation<AccountScreenNavigationProp>();
   const { theme } = useTheme();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const dispatch = useDispatch();
 
   // 5.2 Event handlers
   const handleGoBack = useCallback(() => {
@@ -46,20 +52,26 @@ const AccountScreen = () => {
   }, []);
 
   const handleMyProducts = useCallback(() => {
-    // TODO: 내 상품 화면으로 이동
-    console.log('내 상품');
-  }, []);
+    // 구매 내역 화면으로 이동
+    (navigation as any).navigate('PurchasedItems');
+  }, [navigation]);
 
   const handleLogout = useCallback(() => {
-    Alert.alert(
-      '로그아웃',
-      '정말로 로그아웃하시겠습니까?',
-      [
-        { text: '취소', style: 'cancel' },
-        { text: '로그아웃', onPress: () => navigation.navigate('Login') },
-      ]
-    );
-  }, [navigation]);
+    setShowLogoutModal(true);
+  }, []);
+
+  const handleLogoutConfirm = useCallback(async () => {
+    setShowLogoutModal(false);
+    await (dispatch as any)(logout());
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.APP.TITLE }],
+    });
+  }, [dispatch, navigation]);
+
+  const handleLogoutCancel = useCallback(() => {
+    setShowLogoutModal(false);
+  }, []);
 
   const handleDeleteAccount = useCallback(() => {
     Alert.alert(
@@ -76,9 +88,9 @@ const AccountScreen = () => {
   }, []);
 
   const handleTermsOfService = useCallback(() => {
-    // TODO: 이용 약관 화면으로 이동
-    console.log('이용 약관');
-  }, []);
+    // 이용 약관 화면으로 이동
+    (navigation as any).navigate('TermsOfService');
+  }, [navigation]);
 
   const handleAchievement = useCallback(() => {
     (navigation as any).navigate('Achievement');
@@ -88,37 +100,14 @@ const AccountScreen = () => {
     navigation.navigate('History');
   }, [navigation]);
 
+  const handleAccountDeactivate = useCallback(() => {
+    navigation.navigate(ROUTES.SETTINGS.ACCOUNT_DEACTIVATE);
+  }, [navigation]);
+
   // 5.3 Styles
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-    },
-    header: {
-      paddingTop: 80,
-      paddingBottom: 32,
-      paddingHorizontal: 24,
-      marginHorizontal: 24,
-      marginTop: 24,
-    },
-    headerContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    backButton: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: 28,
-      fontWeight: '700',
-      letterSpacing: -0.5,
-    },
-    placeholder: {
-      width: 48,
     },
     content: {
       flex: 1,
@@ -233,36 +222,70 @@ const AccountScreen = () => {
       fontWeight: '600',
       letterSpacing: -0.2,
     },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContainer: {
+      backgroundColor: theme.colors.surface,
+      padding: 24,
+      borderRadius: 16,
+      width: '80%',
+      maxWidth: 320,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 12,
+      textAlign: 'center',
+      color: theme.colors.text,
+    },
+    modalMessage: {
+      fontSize: 14,
+      marginBottom: 24,
+      textAlign: 'center',
+      color: theme.colors.textSecondary,
+      lineHeight: 20,
+    },
+    modalButtonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+    },
+    modalButton: {
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    modalButtonText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
   });
 
   // 5.4 JSX Return
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* Header */}
-        <GlassmorphismCard style={styles.header}>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={[styles.backButton, { backgroundColor: theme.colors.surface }]}
-              onPress={handleGoBack}
-            >
-              <Icon
-                name="arrow-left"
-                size={20}
-                color={theme.colors.text}
-              />
-            </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-              계정 정보
-            </Text>
-            <View style={styles.placeholder} />
-          </View>
-        </GlassmorphismCard>
-        
+        <GlassmorphismHeader 
+          title="내 정보" 
+          onBackPress={handleGoBack}
+        />
+
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* 내 정보 */}
+          {/* 프로필 */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>내 정보</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>프로필</Text>
             <View style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
               <View style={[styles.avatarContainer, { backgroundColor: theme.colors.elevated }]}>
                 <Icon
@@ -304,9 +327,9 @@ const AccountScreen = () => {
             </View>
           </View>
 
-          {/* 내 상품 */}
+          {/* 구매 내역 */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>내 상품</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>구매 내역</Text>
             <TouchableOpacity 
               style={[styles.menuItem, { backgroundColor: theme.colors.surface }]}
               onPress={handleMyProducts}
@@ -428,7 +451,7 @@ const AccountScreen = () => {
             {/* 계정 탈퇴 */}
             <TouchableOpacity 
               style={[styles.dangerButton, { backgroundColor: theme.colors.error }]}
-              onPress={handleDeleteAccount}
+              onPress={handleAccountDeactivate}
             >
               <Text style={[styles.dangerButtonText, { color: '#FFFFFF' }]}>
                 계정 탈퇴
@@ -437,6 +460,43 @@ const AccountScreen = () => {
           </View>
         </ScrollView>
       </View>
+
+      {/* 로그아웃 모달 */}
+      <Modal
+        visible={showLogoutModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleLogoutCancel}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>
+              로그아웃
+            </Text>
+            <Text style={styles.modalMessage}>
+              정말로 로그아웃하시겠습니까?
+            </Text>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: theme.colors.warning }]}
+                onPress={handleLogoutConfirm}
+              >
+                <Text style={styles.modalButtonText}>
+                  로그아웃
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: theme.colors.textSecondary }]}
+                onPress={handleLogoutCancel}
+              >
+                <Text style={styles.modalButtonText}>
+                  취소
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </GlassmorphismBackground>
   );
 };

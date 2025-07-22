@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // 프로젝트 내부 컴포넌트들
 import GlassmorphismBackground from '../../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../../components/GlassmorphismCard';
+import GlassmorphismHeader from '../../../components/GlassmorphismHeader';
 
 // 프로젝트 내부 타입 및 테마
 import { useTheme } from '../../../theme/ThemeContext';
@@ -106,37 +107,6 @@ const LocationEncyclopediaScreen: React.FC = () => {
     container: {
       flex: 1,
     },
-    header: {
-      paddingTop: 80,
-      paddingBottom: 32,
-      paddingHorizontal: 24,
-      marginHorizontal: 24,
-      marginTop: 24,
-    },
-    headerContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    backButton: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: theme.colors.surface,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: 28,
-      fontWeight: '700',
-      letterSpacing: -0.5,
-      color: theme.colors.text,
-      flex: 1,
-      textAlign: 'center',
-    },
-    placeholder: {
-      width: 48,
-    },
     content: {
       flex: 1,
       paddingHorizontal: 24,
@@ -207,29 +177,12 @@ const LocationEncyclopediaScreen: React.FC = () => {
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={handleBack}
-            >
-              <Icon
-                name="arrow-left"
-                size={20}
-                color={theme.colors.text}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>장소</Text>
-            <View style={styles.placeholder} />
-          </View>
-        </GlassmorphismCard>
+        <GlassmorphismHeader 
+          title="장소 도감" 
+          onBackPress={handleBack}
+        />
 
-        {/* 콘텐츠 */}
-        <ScrollView 
-          style={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
+        <View style={styles.content}>
           <Text style={styles.sectionTitle}>
             장소 목록 ({LOCATION_DATA.length})
           </Text>
@@ -272,7 +225,7 @@ const LocationEncyclopediaScreen: React.FC = () => {
               )}
             </View>
           ))}
-        </ScrollView>
+        </View>
       </View>
     </GlassmorphismBackground>
   );

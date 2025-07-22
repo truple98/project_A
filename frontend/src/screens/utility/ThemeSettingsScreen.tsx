@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -9,9 +9,10 @@ import { useTheme } from '../../theme/ThemeContext';
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
 import FadeDivider from '../../components/FadeDivider';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 import { RootStackParamList } from '../../types';
 
-type ThemeSettingsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ThemeSettings'>;
+type ThemeSettingsScreenNavigationProp = StackNavigationProp<any, any>;
 
 interface ThemeOption {
   id: string;
@@ -64,7 +65,7 @@ const THEME_OPTIONS: ThemeOption[] = [
   },
 ];
 
-const ThemeSettingsScreen = () => {
+const ThemeSettingsScreen: React.FC = () => {
   const navigation = useNavigation<ThemeSettingsScreenNavigationProp>();
   const { theme } = useTheme();
   const [selectedTheme, setSelectedTheme] = useState('default');
@@ -96,27 +97,89 @@ const ThemeSettingsScreen = () => {
     Alert.alert('테마 변경', `${themeOption?.name}이 적용되었습니다.`);
   }, []);
 
+  // 스타일 정의 (useMemo로 캐싱)
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+      paddingTop: 20,
+    },
+    themeCard: {
+      paddingVertical: 8,
+    },
+    themeItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    themeLeft: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    themeIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    themeInfo: {
+      flex: 1,
+    },
+    themeNameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    themeName: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginRight: 8,
+    },
+    premiumBadge: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 8,
+    },
+    premiumText: {
+      fontSize: 10,
+      fontWeight: '700',
+    },
+    themeDescription: {
+      fontSize: 13,
+      fontWeight: '400',
+    },
+    themeRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    selectedIndicator: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  }), [theme]);
+
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleGoBack}
-          >
-            <Text style={[styles.backButtonText, { color: theme.colors.text }]}>←</Text>
-          </TouchableOpacity>
-          
-          <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>테마 설정</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>
-              원하는 테마를 선택하세요
-            </Text>
-          </View>
-        </GlassmorphismCard>
+        <GlassmorphismHeader 
+          title="테마 설정" 
+          subtitle="원하는 테마를 선택하세요"
+          onBackPress={handleGoBack}
+        />
 
-                <ScrollView 
+        <ScrollView 
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -174,110 +237,5 @@ const ThemeSettingsScreen = () => {
     </GlassmorphismBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    paddingTop: 60,
-    marginHorizontal: 20,
-    marginTop: 10,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  headerTitleContainer: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  headerSubtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    fontWeight: '400',
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    paddingTop: 20,
-  },
-  themeCard: {
-    paddingVertical: 8,
-  },
-  themeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  themeLeft: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  themeIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  themeInfo: {
-    flex: 1,
-  },
-  themeNameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  themeName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginRight: 8,
-  },
-  premiumBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  premiumText: {
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  themeDescription: {
-    fontSize: 13,
-    fontWeight: '400',
-  },
-  themeRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  selectedIndicator: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default ThemeSettingsScreen; 

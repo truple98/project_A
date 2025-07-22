@@ -7,12 +7,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // 프로젝트 내부 컴포넌트들
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 
 // 프로젝트 내부 타입 및 테마
 import { RootStackParamList } from '../../types';
 import { useTheme } from '../../theme/ThemeContext';
 
-type ChapterScreenNavigationProp = StackNavigationProp<any, any>;
+type LibraryScreenNavigationProp = StackNavigationProp<any, any>;
 
 interface StoryPackage {
   id: string;
@@ -52,8 +53,8 @@ const STORY_PACKAGES: StoryPackage[] = [
   },
 ];
 
-const ChapterScreen = () => {
-  const navigation = useNavigation<ChapterScreenNavigationProp>();
+const LibraryScreen = () => {
+  const navigation = useNavigation<LibraryScreenNavigationProp>();
   const { theme, mode } = useTheme();
 
   // 이벤트 핸들러
@@ -63,44 +64,13 @@ const ChapterScreen = () => {
 
   const handleStoryPress = useCallback((storyPackage: StoryPackage) => {
     // 스토리 상세 페이지로 이동
-    (navigation as any).navigate('ChapterDetail', { storyId: storyPackage.id });
+    (navigation as any).navigate('LibraryDetail', { storyId: storyPackage.id });
   }, [navigation]);
 
   // 스타일 정의
   const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
-    },
-    header: {
-      paddingTop: 80,
-      paddingBottom: 32,
-      paddingHorizontal: 24,
-      marginHorizontal: 24,
-      marginTop: 24,
-    },
-    headerContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    backButton: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: theme.colors.surface,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    headerTitle: {
-      fontSize: 28,
-      fontWeight: '700',
-      letterSpacing: -0.5,
-      color: theme.colors.text,
-      flex: 1,
-      textAlign: 'center',
-    },
-    placeholder: {
-      width: 48,
     },
     mainContent: {
       flex: 1,
@@ -222,24 +192,11 @@ const ChapterScreen = () => {
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={handleBack}
-            >
-              <Icon
-                name="arrow-left"
-                size={20}
-                color={theme.colors.text}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>챕터</Text>
-            <View style={styles.placeholder} />
-          </View>
-        </GlassmorphismCard>
-        
+        <GlassmorphismHeader 
+          title="서재" 
+          onBackPress={handleBack}
+        />
+
         <View style={styles.mainContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* 스토리 패키지 섹션 */}
@@ -277,4 +234,4 @@ const ChapterScreen = () => {
   );
 };
 
-export default ChapterScreen; 
+export default LibraryScreen; 

@@ -8,9 +8,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../theme/ThemeContext';
 import GlassmorphismBackground from '../../components/GlassmorphismBackground';
 import GlassmorphismCard from '../../components/GlassmorphismCard';
+import GlassmorphismHeader from '../../components/GlassmorphismHeader';
 import { RootStackParamList } from '../../types';
 
-type TermsOfServiceScreenNavigationProp = StackNavigationProp<RootStackParamList, 'TermsOfService'>;
+type TermsOfServiceScreenNavigationProp = StackNavigationProp<any, any>;
 
 const TermsOfServiceScreen = () => {
   const navigation = useNavigation<TermsOfServiceScreenNavigationProp>();
@@ -23,22 +24,11 @@ const TermsOfServiceScreen = () => {
   return (
     <GlassmorphismBackground>
       <View style={styles.container}>
-        {/* 헤더 */}
-        <GlassmorphismCard style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleGoBack}
-          >
-            <Text style={[styles.backButtonText, { color: theme.colors.text }]}>←</Text>
-          </TouchableOpacity>
-          
-          <View style={styles.headerTitleContainer}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>이용약관</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>
-              서비스 이용에 관한 약관입니다
-            </Text>
-          </View>
-        </GlassmorphismCard>
+        <GlassmorphismHeader 
+          title="이용약관" 
+          subtitle="서비스 이용에 관한 약관입니다"
+          onBackPress={handleGoBack}
+        />
 
         <ScrollView 
           contentContainerStyle={styles.scrollContent}
@@ -140,39 +130,6 @@ const TermsOfServiceScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    paddingTop: 60,
-    marginHorizontal: 20,
-    marginTop: 10,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  headerTitleContainer: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  headerSubtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    fontWeight: '400',
   },
   scrollContent: {
     paddingHorizontal: 20,
