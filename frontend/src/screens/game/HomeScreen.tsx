@@ -99,7 +99,7 @@ const HomeScreen = () => {
       flex: 1,
       paddingHorizontal: 24,
       paddingTop: 32,
-      paddingBottom: 120, // 푸터 높이만큼 여백
+      paddingBottom: 80, // 120에서 80으로 줄임 (푸터 높이에 맞춤)
     },
     noticeCard: {
       marginBottom: 48,
@@ -301,8 +301,8 @@ const HomeScreen = () => {
       backgroundColor: 'rgba(255, 255, 255, 0.9)',
       borderTopWidth: 1,
       borderTopColor: 'rgba(0, 0, 0, 0.1)',
-      paddingBottom: 32,
-      paddingTop: 20,
+      paddingBottom: 16, // 32에서 16으로 줄임
+      paddingTop: 12, // 20에서 12로 줄임
     },
     bottomNavContent: {
       flexDirection: 'row',
@@ -347,7 +347,11 @@ const HomeScreen = () => {
         />
 
         {/* 메인 콘텐츠 */}
-        <View style={styles.mainContent}>
+        <ScrollView 
+          style={styles.mainContent}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }} // 푸터 높이만큼 여백
+        >
           {/* 정보창 */}
           <GlassmorphismCard style={styles.noticeCard}>
             <Text style={[styles.noticeTitle, { color: theme.colors.text }]}>
@@ -507,7 +511,7 @@ const HomeScreen = () => {
             </Text>
           </TouchableOpacity>
 
-        </View>
+        </ScrollView>
 
         {/* 하단 네비게이션 바 */}
         <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface }]}>
